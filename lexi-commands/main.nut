@@ -3,9 +3,9 @@ function main() {
     "switchteam"
     ]
     ::registeredcommands <- {}
-    ::registercommandsasconvar <- true // don't change this to true, unless you know what it does
+    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does
     // if it's true and you don't know what it does, make it false
-    print("LOADDDED WOOOOOP WOOOP")
+    // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     Globalize(Lregistercommand)
     Globalize(Lprefix)
@@ -77,7 +77,7 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
 }
 
 function helpfunction(player,args,outputless = false) {
-    SendChatMsg(player,0,Lprefix()+ "help menu this is REALLY wip, I made it like a few hours ago",false,false)
+    SendChatMsg(player,0,Lprefix()+ "help menu!",false,false)
     foreach( key, val in registeredcommands) {
         if (val.adminlevel != 0) {
             continue
@@ -105,7 +105,6 @@ function Lgetentitysfromname(name) {
 //     }
 // }
 function onjoin(player) {
-    printt("WELCEOMEKFMQFQQFW")
     SendChatMsg(player,0,Lprefix()+"Welcome "+player.GetPlayerName() +", type !help for commands",false,false)
 }
 
