@@ -35,7 +35,8 @@ function main() {
 
 function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
     // ServerCommand("sv_cheats 0 ")
-        printt(args)
+        // printt(args)
+        // printt(Time() + "w")
         foreach( key, val in registeredcommands) {
                     // printt("HEREEREREERE|"+ key + "|" + keyword + "|  woa")
                     if (keyword == key) {
@@ -144,9 +145,9 @@ function onmessage(whosentit, message, isteamchat)
 {
 
         
-        // printt("chat message sent by" + whosentit + " length of getplayerarray is " +GetPlayerArray().len())
+        printt("chat message sent by" + whosentit + " length of getplayerarray is " +GetPlayerArray().len())
         // "inspired" very heavily from kcommands
-        print("here" + typeof whosentit)
+        printt("here" + typeof whosentit)
         if (format("%c", message[0]) == "!" || typeof whosentit != "integer" ) {
             local found = false
             printt("Found chat command " + message)
@@ -163,7 +164,7 @@ function onmessage(whosentit, message, isteamchat)
                 msgArr.remove(0)
 
                 foreach( key, val in registeredcommands) {
-                    // printt("HEREEREREERE"+ key + " |" + cmd + "|  woa")
+                    printt("HEREEREREERE"+ key + " |" + cmd + "|  woa")
                     if (cmd == key && 0 == val.adminlevel) {
                         // SetConVarString("autocvar_Lcommandreader", cmd)
                         
