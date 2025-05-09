@@ -2,7 +2,8 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge"
+    // "lexi-chatbridge",
+    "gravitymod"
     ]
 
 
@@ -35,13 +36,17 @@ function main() {
 // if (Lcommandcheck(["switch","st"],0,command))
 
 function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
+    print("PING<PING/>PING")
     // ServerCommand("sv_cheats 0 ")
         // printt(args)
         // printt(Time() + "w")
+         local foundsomething = false
         foreach( key, val in registeredcommands) {
+           
                     // printt("HEREEREREERE|"+ key + "|" + keyword + "|  woa")
                     if (keyword == key) {
                         // printt("HERE2")
+                        foundsomething = true
                         local player = 0
                         local match = "what"
                         if (val.requiressender){
@@ -72,6 +77,9 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
                         // Laddusedcommandtotable("auto","console_rcon", output, id)
                     }
 
+            }
+            if (!foundsomething) {
+                printt("OUTPUT<ERROR/>ENDOUTPUT")
             }
 
 

@@ -29,6 +29,9 @@ function disconnect (player){
 }
 
 function Lsendmessage(args,outputless = false){
+    if ( GetPlayerArray().len() == 0) {
+        return "failed! 0 playing"
+    }
     local output = ""
 
         foreach(arg in args) {
