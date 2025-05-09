@@ -1,9 +1,14 @@
 function main() {
+
     local modfilenames = [
     "switchteam"
     ]
+
+  
+
+
     ::registeredcommands <- {}
-    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does
+    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does it does nothing now, but keep it false
     // if it's true and you don't know what it does, make it false
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
@@ -11,9 +16,11 @@ function main() {
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
     Globalize(Lrconcommand)
+    Globalize(Laddusedcommandtotable)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(onjoin)
-    Lregistercommand("help",0,false,helpfunction,"get help")
+    IncludeFile(format("external/lexi-chatbridge/%s", "main"))
+    Lregistercommand("help",0,false,helpfunction,"get help",true)
     AutoCVar("Lcommandreader", "")
     // AddCallback_OnPlayerKilled
     AddClientCommandCallback( "l", commandrunner )
@@ -26,21 +33,41 @@ function main() {
 
 // if (Lcommandcheck(["switch","st"],0,command))
 
-function Lrconcommand(keyword,who,args,id = RandomInt( 0, 10000 )){
-    local match = Lgetentitysfromname(who)
-    if (match.len() != 1){
-        return false
-    }
-    keyword = keyword.tolower() 
-    player = match[0]
-
-ServerCommand("reload")
+function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
+    // ServerCommand("sv_cheats 0 ")
+        printt(args)
         foreach( key, val in registeredcommands) {
-                    // printt("HEREEREREERE"+ key + " |" + cmd + "|  woa")
+                    // printt("HEREEREREERE|"+ key + "|" + keyword + "|  woa")
                     if (keyword == key) {
-                        printt("running " + key + "For "+player.GetPlayerName())
-                        local output = val.inputfunction(player,args,false)
-                        addusedcommandtotable("auto","console_rcon", output, id)
+                        // printt("HERE2")
+                        local player = 0
+                        local match = "what"
+                        if (val.requiressender){
+                            match = Lgetentitysfromname(who)
+                            if (match.len() != 1){
+                                print("OUTPUT<"+match.len()+" Player matches found. should only be one match."+"/>ENDOUTPUT")
+                                return false
+                            }
+                           
+                            keyword = keyword.tolower() 
+                            player = match[0]
+                        }
+                        // printt("HERE3")
+                         if (typeof args == "string"){
+                                args = [args]
+                            }
+                        // printt("running " + key + "For "+player.GetPlayerName())
+
+                        // printt("HERE4")
+                        
+                        local output = false
+                        if (val.requiressender) {
+                          output = val.inputfunction(player,args,false)}
+                        else {
+                             output = val.inputfunction(args,false)
+                        }
+                        printt("OUTPUT<"+output+"/>ENDOUTPUT")
+                        // Laddusedcommandtotable("auto","console_rcon", output, id)
                     }
 
             }
@@ -59,7 +86,7 @@ ServerCommand("reload")
         onmessage(player,outputarg,false)
     }
 
-function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description){
+function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true){
     if (type(keywords) == "string"){
         keywords = [keywords]
     }
@@ -71,6 +98,7 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         command.adminlevel <- adminlevel
         command.blockchatmessage <- blockchatmessage
         command.inputfunction <- inputfunction
+        command.requiressender <- requiressender
         registeredcommands[ keyword ] <- command
         
     }
@@ -90,7 +118,7 @@ function helpfunction(player,args,outputless = false) {
 function Lgetentitysfromname(name) {
     local output = []
     foreach(player in GetPlayerArray()){
-        if (StringContains(player.GetPlayerName(),name)){
+        if (StringContains(player.GetPlayerName().tolower() ,name.tolower() )){
             output.append(player)
         }
     }
@@ -140,25 +168,29 @@ function onmessage(whosentit, message, isteamchat)
                         // SetConVarString("autocvar_Lcommandreader", cmd)
                         
                         printt("running " + key + "For "+whosentit.GetPlayerName())
-                        local output = val.inputfunction(whosentit,msgArr,false)
+                        if (val.requiressender) {
+                        local output = val.inputfunction(whosentit,msgArr,false)}
+                        else{
+                            local output = val.inputfunction(msgArr,false)
+                        }
                         found = true
-                        addusedcommandtotable(message,"chat_command",output)
+                        // Laddusedcommandtotable(message,"chat_command",output)
                     }
 
             }
-            if (!found){
-                addusedcommandtotable(message,"chat_command_not_valid")
-            }
+            // if (!found){
+            //     Laddusedcommandtotable(message,"chat_command_not_valid")
+            // }
         }
-        else {
-            addusedcommandtotable(message,"chat_message")
-        }
+        // else {
+        //     Laddusedcommandtotable(message,"chat_message")
+        // }
 }
 
-function addusedcommandtotable(command, commandtype, output = false, id = RandomInt( 0, 10000 )){
-    if (!registercommandsasconvar){
-        return
-    }
+function Laddusedcommandtotable(command, commandtype, output = false, id = RandomInt( 0, 10000 )){
+    // if (!registercommandsasconvar){
+    //     return
+    // }
     local serveroutput = GetConVarString("autocvar_Lcommandreader")
     serveroutput += "☻"+id+"☻" + command + "☻" + output + "☻"+ commandtype + "☻X"
     ServerCommand("autocvar_Lcommandreader "+ serveroutput)
