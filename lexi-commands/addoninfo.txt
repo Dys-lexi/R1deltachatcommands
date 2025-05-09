@@ -1,0 +1,6 @@
+"AddonInfo"
+{
+        addontitle "lexi-commands"
+        addonversion "1.0"
+        addonDescription "command framework"
+}

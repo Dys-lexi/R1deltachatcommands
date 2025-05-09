@@ -1,12 +1,13 @@
 function main() {
 
     local modfilenames = [
-    "switchteam"
+    "switchteam",
+    // "lexi-chatbridge"
     ]
 
-  
 
 
+    // printt("OQMIOFQWNIOFNQWOQNWIF")
     ::registeredcommands <- {}
     ::registercommandsasconvar <- false // don't change this to true, unless you know what it does it does nothing now, but keep it false
     // if it's true and you don't know what it does, make it false
@@ -19,14 +20,14 @@ function main() {
     Globalize(Laddusedcommandtotable)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(onjoin)
-    IncludeFile(format("external/lexi-chatbridge/%s", "main"))
+
     Lregistercommand("help",0,false,helpfunction,"get help",true)
     AutoCVar("Lcommandreader", "")
     // AddCallback_OnPlayerKilled
     AddClientCommandCallback( "l", commandrunner )
     foreach (mod in modfilenames) {
         printt("loading commandfile "+mod)
-        IncludeFile(format("external/lexi-commands/%s", mod))
+        IncludeFile(format("external/%s", mod))
     }
    
 }
@@ -143,7 +144,8 @@ function Lprefix(){
 
 function onmessage(whosentit, message, isteamchat)
 {
-
+        local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
+        Laddusedcommandtotable(output,"chat_message")
         
         // printt("chat message sent by" + whosentit + " length of getplayerarray is " +GetPlayerArray().len())
         // "inspired" very heavily from kcommands
@@ -204,3 +206,5 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
 // table.xyz = what
 
 // TrueTeamSwitch()
+
+main()
