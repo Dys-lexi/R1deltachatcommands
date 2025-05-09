@@ -3,7 +3,8 @@ function main() {
     local modfilenames = [
     "switchteam",
     // "lexi-chatbridge",
-    "gravitymod"
+    "gravitymod",
+    "throw"
     ]
 
 
@@ -35,7 +36,7 @@ function main() {
 
 // if (Lcommandcheck(["switch","st"],0,command))
 
-function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
+function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
     print("PING<PING/>PING")
     // ServerCommand("sv_cheats 0 ")
         // printt(args)
@@ -49,20 +50,29 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
                         foundsomething = true
                         local player = 0
                         local match = "what"
-                        if (val.requiressender){
-                            match = Lgetentitysfromname(who)
-                            if (match.len() != 1){
-                                print("OUTPUT<"+match.len()+" Player matches found. should only be one match."+"/>ENDOUTPUT")
-                                return false
-                            }
-                           
-                            keyword = keyword.tolower() 
-                            player = match[0]
-                        }
-                        // printt("HERE3")
-                         if (typeof args == "string"){
+                        if (typeof args == "string"){
                                 args = [args]
                             }
+                        if (val.requiressender){
+                            if (args.len() == 0){
+                                 printt("OUTPUT<Invalid params/>ENDOUTPUT")
+                            }
+                            match = Lgetentitysfromname(args[0])
+                            if (match.len() > 1 && val.onlyonematch){
+                                printt("OUTPUT<"+match.len()+" Player matches found. should only be one match."+"/>ENDOUTPUT")
+                                return false
+                            }
+                            else if (match.len() == 0){
+                                printt("OUTPUT<"+"No matches to the name "+args[0]+" found/>ENDOUTPUT")
+                                return false
+                            }
+                            else{player = match[0]}
+                        //    args.remove(0)
+                            keyword = keyword.tolower() 
+                            
+                        }
+                        // printt("HERE3")
+
                         // printt("running " + key + "For "+player.GetPlayerName())
 
                         // printt("HERE4")
@@ -79,7 +89,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
 
             }
             if (!foundsomething) {
-                printt("OUTPUT<ERROR/>ENDOUTPUT")
+                printt("OUTPUT<Command not found/>ENDOUTPUT")
             }
 
 
@@ -96,7 +106,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 ),who = ""){
         onmessage(player,outputarg,false)
     }
 
-function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true){
+function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true,onlyonematch = true){
     if (type(keywords) == "string"){
         keywords = [keywords]
     }
@@ -109,7 +119,9 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         command.blockchatmessage <- blockchatmessage
         command.inputfunction <- inputfunction
         command.requiressender <- requiressender
+        command.onlyonematch <- onlyonematch
         registeredcommands[ keyword ] <- command
+
         
     }
 }
@@ -127,6 +139,9 @@ function helpfunction(player,args,outputless = false) {
 
 function Lgetentitysfromname(name) {
     local output = []
+    if (name == "_") {
+        return GetPlayerArray()
+    }
     foreach(player in GetPlayerArray()){
         if (StringContains(player.GetPlayerName().tolower() ,name.tolower() )){
             output.append(player)

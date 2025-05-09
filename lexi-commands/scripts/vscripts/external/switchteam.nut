@@ -10,4 +10,3 @@ function Lswitchteam(player,args,outputless = false){
     player.TrueTeamSwitch()
     return true
 }
-

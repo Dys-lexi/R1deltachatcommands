@@ -1,6 +1,5 @@
 function main() {
     Globalize(Lgravity)
-    // !name, adminlevel (0 is everyone), should block the original message (non functional) function to run, description in !help, requires a sender (set this to true if the command uses player arg in any way)
     Lregistercommand("gravity",0,false,Lgravity,"change the gravity",false)
    
 }
