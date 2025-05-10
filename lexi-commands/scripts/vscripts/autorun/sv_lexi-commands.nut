@@ -79,9 +79,9 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
                         
                         local output = false
                         if (val.requiressender) {
-                          output = val.inputfunction(player,args,false)}
+                          output = val.inputfunction(player,args,true)}
                         else {
-                             output = val.inputfunction(args,false)
+                             output = val.inputfunction(args,true)
                         }
                         printt("OUTPUT<"+output+"/>ENDOUTPUT")
                         // Laddusedcommandtotable("auto","console_rcon", output, id)
@@ -168,13 +168,15 @@ function Lprefix(){
 function onmessage(whosentit, message, isteamchat)
 {
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-        Laddusedcommandtotable(output,"chat_message")
+        if (registercommandsasconvar) {
+        Laddusedcommandtotable(output,"chat_message")}
         
         // printt("chat message sent by" + whosentit + " length of getplayerarray is " +GetPlayerArray().len())
         // "inspired" very heavily from kcommands
         // printt("here" + typeof whosentit)
+        local found = false
         if (format("%c", message[0]) == "!" || typeof whosentit != "integer" ) {
-            local found = false
+            
             printt("Found chat command " + message)
             local message2 = message
                 if  ( typeof whosentit == "integer" ) {
@@ -199,7 +201,7 @@ function onmessage(whosentit, message, isteamchat)
                         else{
                             local output = val.inputfunction(msgArr,false)
                         }
-                        found = true
+                        found = val.blockchatmessage
                         // Laddusedcommandtotable(message,"chat_command",output)
                     }
 
@@ -211,6 +213,12 @@ function onmessage(whosentit, message, isteamchat)
         // else {
         //     Laddusedcommandtotable(message,"chat_message")
         // }
+        if (!found){
+        return message}
+        else{
+            // printt("HERE")
+            return ""
+        }
 }
 
 function Laddusedcommandtotable(command, commandtype, output = false, id = RandomInt( 0, 10000 )){
