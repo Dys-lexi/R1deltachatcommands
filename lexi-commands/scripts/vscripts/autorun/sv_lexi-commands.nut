@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    "lexi-chatbridge",
+    // "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate"
@@ -12,7 +12,7 @@ function main() {
 
     // printt("OQMIOFQWNIOFNQWOQNWIF")
     ::registeredcommands <- {}
-    ::registercommandsasconvar <- true // don't change this to true, unless you know what it does it does nothing now, but keep it false
+    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does it does nothing now, but keep it false
     // if it's true and you don't know what it does, make it false
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
