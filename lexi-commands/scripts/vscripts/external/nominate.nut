@@ -260,7 +260,8 @@ function Loutputmapnominate(noms = "NOTHING"){
     
     }
     // printt("HERE"+output)
-     SendChatMsg(true,0,Lprefix()+output ,false,false)
+    if (output != "MAP VOTES: "){
+     SendChatMsg(true,0,Lprefix()+output ,false,false)}
     //  printt("POTENTIALMAPS"+potentialmaps.len())
     //  RandomInt( 2 )
     // if (potentialmaps.len() > 0){
