@@ -4,7 +4,26 @@ function main() {
    
 }
 
+
 function Lthrow(player,args,outputless = false){
+    function makesuretheyarethrown(player){
+        local tries = 10
+        while (tries > 0) {
+            if (IsAlive(player)) {
+                player.SetVelocity( Vector(0,0,10000))
+                wait(0.05)
+                // printt(player.GetVelocity().z+"woa")
+                if (player.GetVelocity().z > 2500) {
+                    break
+                }
+                
+            }
+            tries -=1
+            wait 0.5
+        }
+}
+
+
     if (args.len() != 1){
         return "invalid argument count"
     }
@@ -18,9 +37,10 @@ function Lthrow(player,args,outputless = false){
     // printt("OUTPUT HERE "+ GetPlayerSlot(player) + player.GetEntIndex()+ "boop "+ player.GetPlayerIndex())
     local playerstothrow = Lgetentitysfromname(args[0])
     foreach (player2 in playerstothrow){
-    if (!outputless){
-        SendChatMsg(true,0,Lprefix()+ player2.GetPlayerName() +" thrown",false,false)}
-    player2.SetVelocity( Vector(0,0,50000))}
+        if (!outputless){
+            SendChatMsg(true,0,Lprefix()+ player2.GetPlayerName() +" thrown",false,false)}
+        thread makesuretheyarethrown(player2)
+    }
     if (playerstothrow.len() == 1){
 
     return playerstothrow[0].GetPlayerName() +" thrown"}
@@ -29,3 +49,4 @@ function Lthrow(player,args,outputless = false){
       else if (playerstothrow.len() > 1){
     return "threw "+playerstothrow.len() + " players"}
 }
+

@@ -1,7 +1,7 @@
 function main() {
     Globalize(Lswitchteam)
     // !name, adminlevel (0 is everyone), should block the original message (non functional) function to run, description in !help, requires a sender (set this to true if the command uses player arg in any way)
-    Lregistercommand("switch",0,false,Lswitchteam,"switch your team",true)
+    Lregistercommand(["switch","s"],0,false,Lswitchteam,"switch your team",true)
    
 }
 

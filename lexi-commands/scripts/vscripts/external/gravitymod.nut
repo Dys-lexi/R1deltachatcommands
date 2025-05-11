@@ -1,6 +1,6 @@
 function main() {
     Globalize(Lgravity)
-    Lregistercommand("gravity",0,false,Lgravity,"change the gravity",false)
+    Lregistercommand("gravity",10,false,Lgravity,"change the gravity",false)
    
 }
 

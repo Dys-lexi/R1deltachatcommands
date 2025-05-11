@@ -5,7 +5,7 @@ function main() {
     Lregistercommand("sendmessage",10,false,Lsendmessage,"send a chat message",false)
     AddCallback_OnClientConnected(onconnect)
     AddCallback_OnClientDisconnected(disconnect)
-    AddCallback_OnClientChatMsg(onmessage)
+    // AddCallback_OnClientChatMsg(onmessage)
 }
 // function onmessage(whosentit, message, isteamchat) {
 //     local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message

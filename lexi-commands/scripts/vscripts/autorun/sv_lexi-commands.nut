@@ -2,16 +2,17 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge",
+    "lexi-chatbridge",
     "gravitymod",
-    "throw"
+    "throw",
+    "nominate"
     ]
 
 
 
     // printt("OQMIOFQWNIOFNQWOQNWIF")
     ::registeredcommands <- {}
-    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does it does nothing now, but keep it false
+    ::registercommandsasconvar <- true // don't change this to true, unless you know what it does it does nothing now, but keep it false
     // if it's true and you don't know what it does, make it false
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
@@ -24,6 +25,7 @@ function main() {
     AddCallback_OnClientConnected(onjoin)
 
     Lregistercommand("help",0,false,helpfunction,"get help",true)
+    // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
     // AddCallback_OnPlayerKilled
     AddClientCommandCallback( "l", commandrunner )
@@ -95,7 +97,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
 
 }
 
-    function commandrunner(player, args) {
+function commandrunner(player, args) {
         printt("comamnd")
         
         local outputarg = args
@@ -107,10 +109,21 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
     }
 
 function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true,onlyonematch = true){
+    local Aliases = ""
     if (type(keywords) == "string"){
+        Aliases = keywords
         keywords = [keywords]
+ 
     }
-
+    else{
+        Aliases = keywords[0]
+        for (local i = 1; i < keywords.len() ;i++)
+        {
+            Aliases += "\x1b[38;5;254m, \x1b[38;5;201m"+keywords[i]
+        }
+    }
+    
+    local commandid = registeredcommands.len()
     foreach(keyword in keywords){
         local command = {}
         printt("registering command " + keyword)
@@ -120,6 +133,8 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         command.inputfunction <- inputfunction
         command.requiressender <- requiressender
         command.onlyonematch <- onlyonematch
+        command.id <- commandid
+        command.Aliases <- Aliases
         registeredcommands[ keyword ] <- command
 
         
@@ -128,11 +143,13 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
 
 function helpfunction(player,args,outputless = false) {
     SendChatMsg(player,0,Lprefix()+ "help menu!",false,false)
+    local sentids = []
     foreach( key, val in registeredcommands) {
-        if (val.adminlevel != 0) {
+        if (val.adminlevel != 0 || ArrayContains(sentids,val.id)) {
             continue
         }
-        SendChatMsg(player,0,Lprefix()+"\x1b[38;5;201m" +key+": \x1b[38;5;254m "+ val.description ,false,false)
+        sentids.append(val.id)
+        SendChatMsg(player,0,Lprefix()+"\x1b[38;5;201m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
     }
     return true
 }
@@ -195,7 +212,7 @@ function onmessage(whosentit, message, isteamchat)
                     if (cmd == key && 0 == val.adminlevel) {
                         // SetConVarString("autocvar_Lcommandreader", cmd)
                         
-                        printt("running " + key + "For "+whosentit.GetPlayerName())
+                        printt("running " + key + " For "+whosentit.GetPlayerName())
                         if (val.requiressender) {
                         local output = val.inputfunction(whosentit,msgArr,false)}
                         else{
