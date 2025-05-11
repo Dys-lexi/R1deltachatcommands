@@ -4,7 +4,7 @@ function main() {
     "switchteam",
     // "lexi-chatbridge",
     "gravitymod",
-    "throw",
+    "throw"
     "nominate"
     ]
 

@@ -2,13 +2,18 @@ function main() {
     Globalize(Lnominate)
     Globalize(Lmaps)
     // !name, adminlevel (0 is everyone), should block the original message (non functional) function to run, description in !help, requires a sender (set this to true if the command uses player arg in any way)
-    
+    Globalize(LGetnextmap)
+       Globalize(Loutputmapnominate)
+   ::allowedmaps <- []
+   ::initedmaps <- {}
+   initedmaps.idkglobals <- false
+   AutoCVar("nominates", "b")
     if (GetCurrentPlaylistName() == "campaign_carousel") {
         return
     }
     Lregistercommand(["nominate","nm"],0,false,Lnominate,"Vote for the next map",true)
     Lregistercommand(["maps"],0,true,Lmaps,"Display all maps in rotation",true)
-    AutoCVar("nominates", "b")
+    
     if ( GetMapName() != "mp_lobby") {
         // ServerCommand("autocvar_nominates "+ '""')
         ServerCommand("autocvar_nominates b")
@@ -20,11 +25,8 @@ function main() {
         // printt("I RAN THIS WOA LOOK AT ME")
         thread Loutputmapnominate("pleasewait")
     }
-   Globalize(Loutputmapnominate)
-   ::allowedmaps <- []
-   ::initedmaps <- {}
-   initedmaps.idkglobals <- false
-    Globalize(LGetnextmap)
+
+
 //    local playlist = GetCurrentPlaylistName()
 
 }
@@ -263,7 +265,8 @@ function Loutputmapnominate(noms = "NOTHING"){
     //  RandomInt( 2 )
     // if (potentialmaps.len() > 0){
         if (allowedmaps.len() != 1 || !ArrayContains(allowedmaps[0],potentialmaps)){
-        allowedmaps = [potentialmaps[ RandomInt( potentialmaps.len() )]]}
+            if (potentialmaps.len() != 0){
+        allowedmaps = [potentialmaps[ RandomInt( potentialmaps.len() )]]}}
         // foreach(map in potentialmaps) {
         //     print("MAPPPPP"+map)
         // }
