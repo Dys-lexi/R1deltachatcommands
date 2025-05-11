@@ -1,11 +1,13 @@
 function main() {
     Globalize(Lnominate)
+    Globalize(Lmaps)
     // !name, adminlevel (0 is everyone), should block the original message (non functional) function to run, description in !help, requires a sender (set this to true if the command uses player arg in any way)
     
     if (GetCurrentPlaylistName() == "campaign_carousel") {
         return
     }
     Lregistercommand(["nominate","nm"],0,false,Lnominate,"Vote for the next map",true)
+    Lregistercommand(["maps"],0,true,Lmaps,"Display all maps in rotation",true)
     AutoCVar("nominates", "b")
     if ( GetMapName() != "mp_lobby") {
         // ServerCommand("autocvar_nominates "+ '""')
@@ -25,6 +27,48 @@ function main() {
     Globalize(LGetnextmap)
 //    local playlist = GetCurrentPlaylistName()
 
+}
+
+function Lmaps(player,args,outputless = false){
+    local MAPS = {}
+    MAPS.mp_airbase          <- "Airbase"
+    MAPS.mp_angel_city       <- "Angel City"
+    MAPS.mp_colony           <- "Colony"
+    MAPS.mp_corporate        <- "Corporate"
+    MAPS.mp_lagoon           <- "Lagoon"
+    MAPS.mp_nexus            <- "Nexus"
+    MAPS.mp_outpost_207      <- "Outpost 207"
+    MAPS.mp_overlook         <- "Overlook"
+    MAPS.mp_relic            <- "Relic"
+    MAPS.mp_rise             <- "Rise"
+    MAPS.mp_smugglers_cove   <- "Smuggler's Cove"
+    MAPS.mp_training_ground  <- "Training Ground"
+    MAPS.mp_wargames         <- "War Games"
+    MAPS.mp_runoff           <- "Runoff"
+    MAPS.mp_swampland        <- "Swampland"
+    MAPS.mp_haven            <- "Haven"
+    MAPS.mp_backwater        <- "Backwater"
+    MAPS.mp_sandtrap         <- "Sand Trap"
+    MAPS.mp_zone_18          <- "Zone 18"
+
+    local counter = 0
+    local output = ""
+    SendChatMsg(player,0,Lprefix() + "Maps currently in rotation:" ,false,false)
+    foreach(map in MAPS){
+        
+        if (!ArrayContains(GetPlaylistUniqueMaps(GetCurrentPlaylistName()),map)){
+            counter+=1
+            output += map+", "
+            counter+=1
+        }
+        if (counter%3 == 0){
+            SendChatMsg(player,0,Lprefix() + " " + output.slice(0,output.len()-2) ,false,false)
+            output = ""
+        }
+    }
+    if (output != "") {
+        SendChatMsg(player,0,Lprefix() + " " + output.slice(0,output.len()-2) ,false,false)
+    }
 }
 
 
@@ -219,7 +263,7 @@ function Loutputmapnominate(noms = "NOTHING"){
     //  RandomInt( 2 )
     // if (potentialmaps.len() > 0){
         if (allowedmaps.len() != 1 || !ArrayContains(allowedmaps[0],potentialmaps)){
-        allowedmaps = [potentialmaps[ RandomInt( allowedmaps.len() )]]}
+        allowedmaps = [potentialmaps[ RandomInt( potentialmaps.len() )]]}
         // foreach(map in potentialmaps) {
         //     print("MAPPPPP"+map)
         // }
@@ -233,7 +277,7 @@ function Loutputmapnominate(noms = "NOTHING"){
 function LGetnextmap(){
     // print("HRE HERE HERE HERE HERE")
     if (!initedmaps.idkglobals) {
-        
+    wait 5
     Loutputmapnominate()}
     if (allowedmaps.len()  == 0) {
         // printt("FALSE FALSE FALSE FALSE")
