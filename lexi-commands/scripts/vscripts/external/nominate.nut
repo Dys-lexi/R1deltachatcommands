@@ -148,7 +148,7 @@ function Loutputmapnominate(noms = "NOTHING"){
         nom = split( nom, "{" )
         // printt("WOA"+nom.len())
         if (Lgetentitysfromname(nom[0]).len() > 0 && !ArrayContains(matchednames,nom[0])) {
-            // matchednames.append(nom[0])
+            matchednames.append(nom[0])
             if (!ArrayContains(nominates,nom[1])) {
                 nominates.append(nom[1])
                 nominatecounts.append(1)
