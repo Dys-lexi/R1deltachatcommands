@@ -27,6 +27,9 @@ function Lthrow(player,args,outputless = false){
     if (args.len() != 1){
         return "invalid argument count"
     }
+    if (GetMapName() == "mp_lobby") {
+        return "Cannot throw in the lobby"
+    }
     // ServerCommand ("banid "+GetPlayerSlot(player)) 
     // local plusone = GetPlayerSlot(player) +1
     // local minusone = GetPlayerSlot(player)  -1

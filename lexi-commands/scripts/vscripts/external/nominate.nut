@@ -35,8 +35,10 @@ function Lmaps(player,args,outputless = false){
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
+    MAPS.mp_boneyard         <- "Boneyard"
     MAPS.mp_colony           <- "Colony"
     MAPS.mp_corporate        <- "Corporate"
+    MAPS.mp_fracture         <- "Fracture"
     MAPS.mp_lagoon           <- "Lagoon"
     MAPS.mp_nexus            <- "Nexus"
     MAPS.mp_outpost_207      <- "Outpost 207"
@@ -49,9 +51,18 @@ function Lmaps(player,args,outputless = false){
     MAPS.mp_runoff           <- "Runoff"
     MAPS.mp_swampland        <- "Swampland"
     MAPS.mp_haven            <- "Haven"
+    MAPS.mp_switchback       <- "Export"
     MAPS.mp_backwater        <- "Backwater"
     MAPS.mp_sandtrap         <- "Sand Trap"
+    MAPS.mp_harmony_mines    <- "Dig Site"
     MAPS.mp_zone_18          <- "Zone 18"
+    MAPS.mp_mia              <- "M.I.A"
+    MAPS.mp_nest2            <- "Nest 2"
+    MAPS.mp_box              <- "Box"
+    MAPS.mp_npe              <- "Training"
+    MAPS.mp_o2               <- "Demeter"
+    MAPS.mp_lobby            <- "Lobby"
+
 
     local counter = 0
     local output = ""
@@ -63,7 +74,7 @@ function Lmaps(player,args,outputless = false){
             output += map+", "
             counter+=1
         }
-        if (counter%3 == 0){
+        if (counter%5 == 0){
             SendChatMsg(player,0,Lprefix() + " " + output.slice(0,output.len()-2) ,false,false)
             output = ""
         }
@@ -78,8 +89,10 @@ function Lnominate(player,args,outputless = false){
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
+    MAPS.mp_boneyard         <- "Boneyard"
     MAPS.mp_colony           <- "Colony"
     MAPS.mp_corporate        <- "Corporate"
+    MAPS.mp_fracture         <- "Fracture"
     MAPS.mp_lagoon           <- "Lagoon"
     MAPS.mp_nexus            <- "Nexus"
     MAPS.mp_outpost_207      <- "Outpost 207"
@@ -92,9 +105,18 @@ function Lnominate(player,args,outputless = false){
     MAPS.mp_runoff           <- "Runoff"
     MAPS.mp_swampland        <- "Swampland"
     MAPS.mp_haven            <- "Haven"
+    MAPS.mp_switchback       <- "Export"
     MAPS.mp_backwater        <- "Backwater"
     MAPS.mp_sandtrap         <- "Sand Trap"
+    MAPS.mp_harmony_mines    <- "Dig Site"
     MAPS.mp_zone_18          <- "Zone 18"
+    MAPS.mp_mia              <- "M.I.A"
+    MAPS.mp_nest2            <- "Nest 2"
+    MAPS.mp_box              <- "Box"
+    MAPS.mp_npe              <- "Training"
+    MAPS.mp_o2               <- "Demeter"
+    MAPS.mp_lobby            <- "Lobby"
+
 
     if (args.len() == 0){
         SendChatMsg(player,0,Lprefix()+"Include a map name! eg: !nm angel" ,false,false)
@@ -156,8 +178,10 @@ function Loutputmapnominate(noms = "NOTHING"){
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
+    MAPS.mp_boneyard         <- "Boneyard"
     MAPS.mp_colony           <- "Colony"
     MAPS.mp_corporate        <- "Corporate"
+    MAPS.mp_fracture         <- "Fracture"
     MAPS.mp_lagoon           <- "Lagoon"
     MAPS.mp_nexus            <- "Nexus"
     MAPS.mp_outpost_207      <- "Outpost 207"
@@ -170,9 +194,18 @@ function Loutputmapnominate(noms = "NOTHING"){
     MAPS.mp_runoff           <- "Runoff"
     MAPS.mp_swampland        <- "Swampland"
     MAPS.mp_haven            <- "Haven"
+    MAPS.mp_switchback       <- "Export"
     MAPS.mp_backwater        <- "Backwater"
     MAPS.mp_sandtrap         <- "Sand Trap"
+    MAPS.mp_harmony_mines    <- "Dig Site"
     MAPS.mp_zone_18          <- "Zone 18"
+    MAPS.mp_mia              <- "M.I.A"
+    MAPS.mp_nest2            <- "Nest 2"
+    MAPS.mp_box              <- "Box"
+    MAPS.mp_npe              <- "Training"
+    MAPS.mp_o2               <- "Demeter"
+    MAPS.mp_lobby            <- "Lobby"
+
     // wait 0.1
     // local noms = GetConVarString("autocvar_nominates")
     if (noms == "NOTHING") {
@@ -267,14 +300,17 @@ function Loutputmapnominate(noms = "NOTHING"){
     // if (potentialmaps.len() > 0){
         if (allowedmaps.len() != 1 || !ArrayContains(allowedmaps[0],potentialmaps)){
             if (potentialmaps.len() != 0){
-        allowedmaps = [potentialmaps[ RandomInt( potentialmaps.len() )]]}}
+        allowedmaps = [potentialmaps[ RandomInt( potentialmaps.len() )]]}
+        
+         if ( GetMapName() == "mp_lobby") {
+        SelectNextMap()}
+        }
         // foreach(map in potentialmaps) {
         //     print("MAPPPPP"+map)
         // }
     // level.ui.privatematch_map = getconsttable().ePrivateMatchMaps[potentialmaps[ RandomInt( potentialmaps.len() )]]}
     // LGetnextmap()
-     if ( GetMapName() == "mp_lobby") {
-        SelectNextMap()}
+    
 
 }
 

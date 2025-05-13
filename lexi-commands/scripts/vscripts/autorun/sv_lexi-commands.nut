@@ -4,30 +4,38 @@ function main() {
     "switchteam",
     // "lexi-chatbridge",
     "gravitymod",
-    "throw"
-    "nominate"
+    "throw",
+    "nominate",
+    "extend",
+    "skip"
     ]
 
 
 
     // printt("OQMIOFQWNIOFNQWOQNWIF")
     ::registeredcommands <- {}
-    ::registercommandsasconvar <- false // don't change this to true, unless you know what it does it does nothing now, but keep it false
+    // ::matchid <- "ID<"+Daily_GetCurrentTime()+"/>ID"
+    // ::registercommandsasconvar <- true // don't change this to true, unless you know what it does it does nothing now, but keep it false
     // if it's true and you don't know what it does, make it false
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
+    ::registeredvotes <- {}
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
     Globalize(Lrconcommand)
     Globalize(Laddusedcommandtotable)
+    Globalize(Lregistervote)
+    Globalize(Lvote)
     AddCallback_OnClientChatMsg(onmessage)
-    AddCallback_OnClientConnected(onjoin)
+    AddCallback_OnClientConnected(Lonjoin)
 
     Lregistercommand("help",0,false,helpfunction,"get help",true)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
+    AutoCVar("matchid","")
     // AddCallback_OnPlayerKilled
+    ServerCommand("matchid "+ "ID<"+Daily_GetCurrentTime()+"/>ID")
     AddClientCommandCallback( "l", commandrunner )
     foreach (mod in modfilenames) {
         printt("loading commandfile "+mod)
@@ -37,9 +45,116 @@ function main() {
 }
 
 // if (Lcommandcheck(["switch","st"],0,command))
+function Lregistervote(votename,percentageaccept,minaccept,timelimit = 0, cooldown = 0, extendtimelimitonvote = 30){
+    local newvote = {}
+    if (timelimit == 0){
+        timelimit = 99999
+    }
+    newvote.percentageaccept <- percentageaccept
+    newvote.minaccept <- minaccept
+    newvote.functionpass <- false
+    newvote.timelimit <- timelimit
+    newvote.functionnopass <- false
+    newvote.extendtimelimitonvote <- extendtimelimitonvote
+    // newvote.currentvotes <- 0
+    newvote.endsat <- 0
+    newvote.voted <- {}
+    newvote.cooldown <- cooldown
+    newvote.nextvotetime <- 0
+    registeredvotes [votename] <- newvote
+}
+
+function Lvote(votename,player, voteweight = 1, forcenewvote = false ,args = []){  
+    local ispossible = true  
+    local needed = (GetPlayerArray().len()*registeredvotes[votename].percentageaccept).tointeger()
+    if (needed == 0) {
+        needed = 1
+    } else if (needed <registeredvotes[votename].minaccept) {
+        needed = registeredvotes[votename].minaccept
+    }
+    if (needed > GetPlayerArray().len()) {
+     
+        local output = {}
+        output.votepassed <- false
+        output.votes <- 0
+        output.votesneeded <- needed
+        output.timeleft <-  0
+        output.message <- "not possible"
+        output.oncooldown <- true
+        output.alreadyvoted <- false
+        output.extendcooldown <- registeredvotes[votename].nextvotetime - Time()
+        output.voteispossible <- false
+        return output
+    }
+    // local newvote = registeredvotes[votename].currentvotes == 0
+    if (Time() < registeredvotes[votename].nextvotetime){
+        local output = {}
+        output.votepassed <- false
+        output.votes <- 0
+        output.votesneeded <- needed
+        output.timeleft <-  0
+        output.message <- "on cooldown"
+        output.oncooldown <- true
+        output.alreadyvoted <- false
+        output.extendcooldown <- registeredvotes[votename].nextvotetime - Time()
+        output.voteispossible <- ispossible
+        return output
+    }
+    if (registeredvotes[votename].voted.len() == 0 || forcenewvote || registeredvotes[votename].endsat < Time()) {
+        // registeredvotes[votename].currentvotes = 0
+        registeredvotes[votename].voted = {}
+        registeredvotes[votename].endsat =  Time() +  registeredvotes[votename].timelimit
+    }
+    else {
+        registeredvotes[votename].endsat += registeredvotes[votename].extendtimelimitonvote
+    }
+
+    // registeredvotes[votename].currentvotes += voteweight
+    if (args.len() != 0){
+        if (args[0] == "force") {
+            
+        }
+    }
+    local alreadyvoted = ArrayContains(TableKeysToArray(registeredvotes[votename].voted),player.GetEntIndex())
+    registeredvotes[votename].voted [player.GetEntIndex()] <- voteweight
+
+    // add up votes
+
+    local totalvote = 0
+    local entitytable = []
+    foreach (entindex in GetPlayerArray()){
+        entitytable.append(entindex.GetEntIndex())
+    }
+    foreach( key, val in registeredvotes[votename].voted){
+        // printt("HERE"+key+val)
+        if (ArrayContains(entitytable,key)) {
+            // printt("HEREeee  "+entitytable.len())
+            totalvote += val
+        }
+    }
+    local output = {}
+    if (totalvote >= needed) {
+         registeredvotes[votename].nextvotetime <- Time() +   registeredvotes[votename].cooldown
+    }
+    local message = "voted"
+    if (alreadyvoted) {
+        message = "already voted"
+    }
+    // PrintTable(registeredvotes)
+    output.votepassed <- totalvote >= needed
+    output.votes <- totalvote
+    output.votesneeded <- needed
+    output.oncooldown <- false
+    output.timeleft <-  (registeredvotes[votename].endsat - Time()).tointeger()
+    output.message <- message
+    output.alreadyvoted <- alreadyvoted
+    output.voteispossible <- ispossible
+
+    return output
+}
 
 function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
-    print("PING<PING/>PING")
+    // print(matchid)
     // ServerCommand("sv_cheats 0 ")
         // printt(args)
         // printt(Time() + "w")
@@ -142,7 +257,7 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
 }
 
 function helpfunction(player,args,outputless = false) {
-    SendChatMsg(player,0,Lprefix()+ "help menu!",false,false)
+    SendChatMsg(player,0,Lprefix()+ "help menu! (v0.1.1)",false,false)
     local sentids = []
     foreach( key, val in registeredcommands) {
         if (val.adminlevel != 0 || ArrayContains(sentids,val.id)) {
@@ -174,7 +289,7 @@ function Lgetentitysfromname(name) {
 //         wait 1
 //     }
 // }
-function onjoin(player) {
+function Lonjoin(player) {
     SendChatMsg(player,0,Lprefix()+"Welcome "+player.GetPlayerName() +", type !help for commands",false,false)
 }
 
@@ -185,8 +300,8 @@ function Lprefix(){
 function onmessage(whosentit, message, isteamchat)
 {
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-        if (registercommandsasconvar) {
-        Laddusedcommandtotable(output,"chat_message")}
+        // if (registercommandsasconvar) {
+        // Laddusedcommandtotable(output,"chat_message")}
         
         // printt("chat message sent by" + whosentit + " length of getplayerarray is " +GetPlayerArray().len())
         // "inspired" very heavily from kcommands
@@ -231,6 +346,7 @@ function onmessage(whosentit, message, isteamchat)
         //     Laddusedcommandtotable(message,"chat_message")
         // }
         if (!found){
+            // printt("Here")
         return message}
         else{
             // printt("HERE")
