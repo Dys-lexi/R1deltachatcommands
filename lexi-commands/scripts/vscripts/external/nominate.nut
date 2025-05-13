@@ -332,7 +332,11 @@ function LGetnextmap(){
     NEXTTmap.score <- 10000
     // printt("TRYING TO FORCE MAP "+nextmap)
     // PrintTable(NEXTTmap)
-    return NEXTTmap
+    if (type(NEXTTmap) == "table"){
+    return NEXTTmap}
+    else{
+        return false
+    }
 }
 
 function LGetMapIndex( mapName )

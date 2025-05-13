@@ -1312,7 +1312,7 @@ function Lobby_PickNextMapModeCombo( allowedMaps = null )
     
 	local nextCombo = Random( selectionPool )
        local next = LGetnextmap()
-    if (next) {
+    if (next && next != null) {
         nextCombo = next
     }
 	printt( "==============================================" )

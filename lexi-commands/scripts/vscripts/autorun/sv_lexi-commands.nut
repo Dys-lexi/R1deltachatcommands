@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge",
+    "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
@@ -20,6 +20,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
+    ::version <- "v0.1.2"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -257,7 +258,7 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
 }
 
 function helpfunction(player,args,outputless = false) {
-    SendChatMsg(player,0,Lprefix()+ "help menu! (v0.1.1)",false,false)
+    SendChatMsg(player,0,Lprefix()+ "help menu! ("+version+")",false,false)
     local sentids = []
     foreach( key, val in registeredcommands) {
         if (val.adminlevel != 0 || ArrayContains(sentids,val.id)) {
