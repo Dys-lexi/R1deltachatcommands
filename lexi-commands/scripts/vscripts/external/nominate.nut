@@ -122,6 +122,12 @@ function Lnominate(player,args,outputless = false){
         SendChatMsg(player,0,Lprefix()+"Include a map name! eg: !nm angel" ,false,false)
         return false
     }
+    local newarg = ""
+    foreach (arg in args){
+        newarg+=arg+" "
+    }
+
+    args = [newarg.slice(0,newarg.len()-1)]
     local wantedmap = args[0]
     local containedmaps = []
     foreach (key, value in MAPS) {
