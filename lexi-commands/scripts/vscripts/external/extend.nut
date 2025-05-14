@@ -14,14 +14,14 @@ function Lextend(player,args,outputless = false){
          SendChatMsg(player,0,Lprefix()+"not enough people online to pass vote ("+response.votesneeded+" needed)",false,false)
     }
     else if (response.message == "voted") {
-        SendChatMsg(true,0,Lprefix()+ player.GetPlayerName() +" Has voted to extend the map ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        SendChatMsg(true,0,Lprefix()+ player.GetPlayerName() +" has voted to extend the map ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
         if (response.votepassed) {
             SendChatMsg(true,0,Lprefix()+ "Map extended for "+timeextend+" minutes!",false,false)
             level.matchTimeLimitSeconds <- (level.matchTimeLimitSeconds - Time() +timeextend  * 60.0 ).tofloat()
         }
     }
     else if (response.alreadyvoted) {
-        SendChatMsg(true,0,Lprefix()+ player.GetPlayerName() +" Really wants to extend the map! ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        SendChatMsg(true,0,Lprefix()+ player.GetPlayerName() +" really wants to extend the map! ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
     }
     else if (response.oncooldown) {
         SendChatMsg(player,0,Lprefix()+"Extend is on cooldown for " + (response.extendcooldown).tointeger()+ " more seconds",false,false)

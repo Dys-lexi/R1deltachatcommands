@@ -337,7 +337,7 @@ function LGetnextmap(){
     NEXTTmap.mapName <- nextmap
     NEXTTmap.score <- 10000
     // printt("TRYING TO FORCE MAP "+nextmap)
-    // PrintTable(NEXTTmap)
+    PrintTable(NEXTTmap)
     if (type(NEXTTmap) == "table"){
     return NEXTTmap}
     else{
