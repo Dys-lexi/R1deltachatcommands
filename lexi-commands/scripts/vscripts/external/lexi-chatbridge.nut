@@ -9,9 +9,16 @@ function main() {
     thread nextmap()
 }
 function LBonmessage(whosentit, message, isteamchat) {
-    local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-    Laddusedcommandtotable(output,"chat_message")
-    return message
+    
+    if ((message.len() > 1 && format("%c", message[0]) == "!" ) || (message.len() > 2 && format("%c", message[0]) == "t"  &&format("%c", message[1]) == "!" ) ) {
+        local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
+        Laddusedcommandtotable(output,"command_message")
+        return
+    }
+         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
+        Laddusedcommandtotable(output,"chat_message")
+        return
+
     
     
 }
@@ -81,7 +88,7 @@ function Lsendmessage(args,outputless = false){
             output += arg + " "
         }
     
-    SendChatMsg(true,0,output,false,false)
+    LSendChatMsg(true,0,output,false,false)
     return "sent!"
 }
 

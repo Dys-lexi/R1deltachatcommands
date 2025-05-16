@@ -10,6 +10,20 @@ function main() {
     "skip"
     ]
 
+    ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
+    ::adminpasswords <- {}
+    adminpasswords.adminlevel1 <- "level1AUTH"
+    adminpasswords.adminlevel2 <- "level2AUTH"
+    adminpasswords.adminlevel3 <- "level3AUTH"
+
+
+
+
+
+    // ^settings^ 
+
+
+
 
 
     // printt("OQMIOFQWNIOFNQWOQNWIF")
@@ -20,7 +34,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.3"
+    ::version <- "v0.1.4"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -28,10 +42,17 @@ function main() {
     Globalize(Laddusedcommandtotable)
     Globalize(Lregistervote)
     Globalize(Lvote)
+    Globalize(LSendChatMsg)
+    Globalize(Lgetplayersadminlevel)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
-
+    ::adminlist <- {}
+    adminlist.adminlevel1 <- []
+    adminlist.adminlevel2 <- []
+    adminlist.adminlevel3 <- []
     Lregistercommand("help",0,false,helpfunction,"get help",true)
+    Lregistercommand("auth",0,true,authfunction,"become a admin",true,true)
+    AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
     AutoCVar("matchid","")
@@ -109,13 +130,13 @@ function Lvote(votename,player, voteweight = 1, forcenewvote = false ,args = [])
     else {
         registeredvotes[votename].endsat += registeredvotes[votename].extendtimelimitonvote
     }
-
     // registeredvotes[votename].currentvotes += voteweight
     if (args.len() != 0){
-        if (args[0] == "force") {
-            
+        if (args[0] == "force" && Lgetplayersadminlevel(player) > 0) {
+            voteweight*=100
         }
     }
+    // printt("VOTEWEIT"+voteweight)
     local alreadyvoted = ArrayContains(TableKeysToArray(registeredvotes[votename].voted),player.GetEntIndex())
     registeredvotes[votename].voted [player.GetEntIndex()] <- voteweight
 
@@ -129,13 +150,14 @@ function Lvote(votename,player, voteweight = 1, forcenewvote = false ,args = [])
     foreach( key, val in registeredvotes[votename].voted){
         // printt("HERE"+key+val)
         if (ArrayContains(entitytable,key)) {
-            // printt("HEREeee  "+entitytable.len())
+            // printt("HEREeee  "+val)
             totalvote += val
         }
     }
     local output = {}
     if (totalvote >= needed) {
          registeredvotes[votename].nextvotetime <- Time() +   registeredvotes[votename].cooldown
+         
     }
     local message = "voted"
     if (alreadyvoted) {
@@ -150,7 +172,10 @@ function Lvote(votename,player, voteweight = 1, forcenewvote = false ,args = [])
     output.message <- message
     output.alreadyvoted <- alreadyvoted
     output.voteispossible <- ispossible
-
+        if (totalvote >= needed) {
+        registeredvotes[votename].voted = {}
+         
+    }
     return output
 }
 
@@ -174,6 +199,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
                         if (val.requiressender){
                             if (args.len() == 0){
                                  printt("OUTPUT<Invalid params/>ENDOUTPUT")
+                                 return false
                             }
                             match = Lgetentitysfromname(args[0])
                             if (match.len() > 1 && val.onlyonematch){
@@ -196,11 +222,14 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
                         // printt("HERE4")
                         
                         local output = false
+                        print("FUNCRETURN<")
                         if (val.requiressender) {
                           output = val.inputfunction(player,args,true)}
                         else {
                              output = val.inputfunction(args,true)
                         }
+                        print("/>FUNCRETURN")
+                        print("BEGINMAINOUT")
                         printt("OUTPUT<"+output+"/>ENDOUTPUT")
                         // Laddusedcommandtotable("auto","console_rcon", output, id)
                     }
@@ -216,12 +245,12 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
 function commandrunner(player, args) {
         printt("comamnd")
         
-        local outputarg = args
+        local outputarg = "!" +args
         // foreach(arg in args){
         //     outputarg+= " " + arg
         // }
         printt("outputaaarg"+outputarg)
-        onmessage(player,outputarg,false)
+        onmessage(player.GetEntIndex(),outputarg,false)
     }
 
 function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true,onlyonematch = true){
@@ -256,16 +285,74 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         
     }
 }
+function authfunction(player,args,outputless = false) {
+    if (args.len() == 0) {
+        LSendChatMsg(player,0, "include a password!!!",false,false,outputless)
+        return
+    }
+    else if (!adminenabled) {
+        LSendChatMsg(player,0, "admin is disabled",false,false,outputless)
+        return
+    }
+    local sucsess = false
+    foreach (key,password in adminpasswords) {
+        if (password == args[0]) {
+            sucsess = true
+            adminlist[key].append(player.GetPlayerName()+player.GetEntIndex())
+        }
+    }
+    if (!sucsess){
+        LSendChatMsg(player,0, "wrong pass",false,false,outputless)
+        return
+    }
+    LSendChatMsg(player,0, "correct pass!",false,false,outputless)
+    // PrintTable(adminlist)
+}
+function LSendChatMsg(who = true,from = 0, text = "", isteam = false, isdead = false, outputless = false){
+    if (!outputless){
+         SendChatMsg(who,from,Lprefix()+ text,isteam,isdead)
+    }
+    print("CMDLINE<"+text+"</CMDLINE")
+}
+function authremove(player){
+    // printt("HERE")
+    // PrintTable(adminlist)
+    foreach (key,value in adminlist){
+        local keyoffset = 0
+        local originallen = value.len()
+        for (local index = 0 ;index < originallen; index++) {
+            local name = value[keyoffset+index]
+            if (name == player.GetPlayerName()+player.GetEntIndex()) {
+                adminlist[key].remove(index+keyoffset)
+                keyoffset -= 1
+                // printt("REMOVED" + player.GetPlayerName()+player.GetEntIndex() )
+            }
+        }
+    }
+    //     printt("HERE2")
+    // PrintTable(adminlist)
+}
 
+function Lgetplayersadminlevel(player){
+    local levelw = 0
+    local actuallevel = 0
+    foreach (key,value in adminlist){
+        levelw+=1
+        if (ArrayContains(value,player.GetPlayerName()+player.GetEntIndex())) {
+            actuallevel = levelw
+        }
+    }
+    return actuallevel
+}
 function helpfunction(player,args,outputless = false) {
-    SendChatMsg(player,0,Lprefix()+ "help menu! ("+version+")",false,false)
+    LSendChatMsg(player,0, "help menu! ("+version+")",false,false)
     local sentids = []
     foreach( key, val in registeredcommands) {
-        if (val.adminlevel != 0 || ArrayContains(sentids,val.id)) {
+        if (val.adminlevel > Lgetplayersadminlevel(player) || ArrayContains(sentids,val.id)) {
             continue
         }
         sentids.append(val.id)
-        SendChatMsg(player,0,Lprefix()+"\x1b[38;5;201m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
+        LSendChatMsg(player,0,"\x1b[38;5;201m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
     }
     return true
 }
@@ -291,7 +378,7 @@ function Lgetentitysfromname(name) {
 //     }
 // }
 function Lonjoin(player) {
-    SendChatMsg(player,0,Lprefix()+"Welcome "+player.GetPlayerName() +", type !help for commands",false,false)
+    LSendChatMsg(player,0,"Welcome "+player.GetPlayerName() +", type !help for commands" ,false,false)
 }
 
 function Lprefix(){
@@ -308,13 +395,14 @@ function onmessage(whosentit, message, isteamchat)
         // "inspired" very heavily from kcommands
         // printt("here" + typeof whosentit)
         local found = false
-        if (format("%c", message[0]) == "!" || typeof whosentit != "integer" ) {
-            
+        if ((format("%c", message[0]) == "!" && message.len() > 1 ) || (message.len() > 2 && format("%c", message[0]) == "t"  &&format("%c", message[1]) == "!" ) ) {
+            // if (format("%c", message[0]) == "t") {}
             printt("Found chat command " + message)
             local message2 = message
                 if  ( typeof whosentit == "integer" ) {
                     whosentit = GetEntByIndex(whosentit)
-                     message2 = message.slice(1,message.len())
+                    if (format("%c", message[0]) == "t") { message2 = message.slice(2,message.len())} else {
+                     message2 = message.slice(1,message.len())}
                 }
     
                 // local id = RandomInt( 0, 10000 )
@@ -325,7 +413,7 @@ function onmessage(whosentit, message, isteamchat)
 
                 foreach( key, val in registeredcommands) {
                     // printt("HEREEREREERE"+ key + " |" + cmd + "|  woa")
-                    if (cmd == key && 0 == val.adminlevel) {
+                    if (cmd == key && Lgetplayersadminlevel(whosentit) >= val.adminlevel) {
                         // SetConVarString("autocvar_Lcommandreader", cmd)
                         
                         printt("running " + key + " For "+whosentit.GetPlayerName())

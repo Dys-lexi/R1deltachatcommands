@@ -66,7 +66,7 @@ function Lmaps(player,args,outputless = false){
 
     local counter = 0
     local output = ""
-    SendChatMsg(player,0,Lprefix() + "Maps currently in rotation:" ,false,false)
+    LSendChatMsg(player,0, "Maps currently in rotation:" ,false,false)
     foreach(map in MAPS){
         
         if (!ArrayContains(GetPlaylistUniqueMaps(GetCurrentPlaylistName()),map)){
@@ -75,12 +75,12 @@ function Lmaps(player,args,outputless = false){
             counter+=1
         }
         if (counter%5 == 0){
-            SendChatMsg(player,0,Lprefix() + " " + output.slice(0,output.len()-2) ,false,false)
+            LSendChatMsg(player,0, " " + output.slice(0,output.len()-2) ,false,false)
             output = ""
         }
     }
     if (output != "") {
-        SendChatMsg(player,0,Lprefix() + " " + output.slice(0,output.len()-2) ,false,false)
+        LSendChatMsg(player,0, " " + output.slice(0,output.len()-2) ,false,false)
     }
 }
 
@@ -119,7 +119,7 @@ function Lnominate(player,args,outputless = false){
 
 
     if (args.len() == 0){
-        SendChatMsg(player,0,Lprefix()+"Include a map name! eg: !nm angel" ,false,false)
+        LSendChatMsg(player,0,"Include a map name! eg: !nm angel" ,false,false,outputless)
         return false
     }
     local newarg = ""
@@ -137,7 +137,7 @@ function Lnominate(player,args,outputless = false){
         }
     }
     if (containedmaps.len() == 0){
-        SendChatMsg(player,0,Lprefix()+wantedmap+" does not match any maps!" ,false,false)
+        LSendChatMsg(player,0,wantedmap+" does not match any maps!" ,false,false,outputless)
 
         return false
     }
@@ -154,15 +154,15 @@ function Lnominate(player,args,outputless = false){
         }
 
         // printt("BOOOP"+matchedmaps)
-        SendChatMsg(player,0,Lprefix()+"Map name is matched by multiple maps! ("+matchedmaps+")" ,false,false)
+        LSendChatMsg(player,0,"Map name is matched by multiple maps! ("+matchedmaps+")" ,false,false,outputless)
         return false
     }
     if ( containedmaps[0] ==  GetMapName()) {
-        SendChatMsg(player,0,Lprefix()+"You cannot vote for the current map!" ,false,false)
+        LSendChatMsg(player,0,"You cannot vote for the current map!" ,false,false,outputless)
         return false
     }
     if (!ArrayContains(GetPlaylistUniqueMaps(GetCurrentPlaylistName()), containedmaps[0])){
-        SendChatMsg(player,0,Lprefix()+MAPS[containedmaps[0]]+" Is not in the map pool!" ,false,false)
+        LSendChatMsg(player,0,MAPS[containedmaps[0]]+" Is not in the map pool!" ,false,false,outputless)
         return false
     }
     local noms = GetConVarString("autocvar_nominates")
@@ -178,7 +178,7 @@ function Lnominate(player,args,outputless = false){
 }
 
 function Loutputmapnominate(noms = "NOTHING"){
-    //  SendChatMsg(true,0,Lprefix()+"boop" ,false,false)
+    //  SendChatMsg(true,0,"boop" ,false,false)
     initedmaps.idkglobals = true
 
     local MAPS = {}
@@ -300,7 +300,7 @@ function Loutputmapnominate(noms = "NOTHING"){
     }
     // printt("HERE"+output)
     if (output != "MAP VOTES: "){
-     SendChatMsg(true,0,Lprefix()+output ,false,false)}
+     LSendChatMsg(true,0,output ,false,false)}
     //  printt("POTENTIALMAPS"+potentialmaps.len())
     //  RandomInt( 2 )
     // if (potentialmaps.len() > 0){
@@ -337,8 +337,21 @@ function LGetnextmap(){
     NEXTTmap.mapName <- nextmap
     NEXTTmap.score <- 10000
     // printt("TRYING TO FORCE MAP "+nextmap)
-    PrintTable(NEXTTmap)
+    // PrintTable(NEXTTmap)
+    
+    
     if (type(NEXTTmap) == "table"){
+        local includesname = false
+        foreach (key,value in NEXTTmap) {
+            if (key == "mapName") {
+                includesname = true
+                break
+            }
+        }
+        if (!includesname) {
+            print("here")
+            return false
+        }
     return NEXTTmap}
     else{
         return false

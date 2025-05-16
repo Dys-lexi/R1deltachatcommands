@@ -1,6 +1,6 @@
 function main() {
     Globalize(Lthrow)
-    Lregistercommand("throw",10,false,Lthrow,"throw a player into the air",true,false)
+    Lregistercommand("throw",1,true,Lthrow,"throw a player into the air",true,false)
    
 }
 
@@ -40,8 +40,8 @@ function Lthrow(player,args,outputless = false){
     // printt("OUTPUT HERE "+ GetPlayerSlot(player) + player.GetEntIndex()+ "boop "+ player.GetPlayerIndex())
     local playerstothrow = Lgetentitysfromname(args[0])
     foreach (player2 in playerstothrow){
-        if (!outputless){
-            SendChatMsg(true,0,Lprefix()+ player2.GetPlayerName() +" thrown",false,false)}
+
+            LSendChatMsg(true,0,player2.GetPlayerName() +" thrown",false,false,outputless)
         thread makesuretheyarethrown(player2)
     }
     if (playerstothrow.len() == 1){
