@@ -1,8 +1,17 @@
 // requires lexi-commands to work
 
 function main() {
+
+    local modfilenames = [
+    "playing"
+    ]
+    foreach (mod in modfilenames) {
+        printt("loading commandfileb "+mod)
+        IncludeFile(format("external/%s", mod))
+    }
+
     Globalize(Lsendmessage)
-    Lregistercommand("sendmessage",10,false,Lsendmessage,"send a chat message",false)
+    Lregistercommand("sendmessage",1,false,Lsendmessage,"send a chat message",false)
     AddCallback_OnClientConnected(Lconnect)
     AddCallback_OnClientDisconnected(Ldisconnect)
     AddCallback_OnClientChatMsg(LBonmessage)

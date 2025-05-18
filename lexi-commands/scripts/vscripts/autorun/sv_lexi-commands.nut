@@ -34,7 +34,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.4"
+    ::version <- "v0.1.5"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -312,7 +312,7 @@ function LSendChatMsg(who = true,from = 0, text = "", isteam = false, isdead = f
     if (!outputless){
          SendChatMsg(who,from,Lprefix()+ text,isteam,isdead)
     }
-    print("CMDLINE<"+text+"</CMDLINE")
+    print("CMDLINE<"+text+"/>CMDLINE")
 }
 function authremove(player){
     // printt("HERE")
