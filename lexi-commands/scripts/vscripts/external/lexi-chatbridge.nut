@@ -97,7 +97,7 @@ function Lsendmessage(args,outputless = false){
             output += arg + " "
         }
     
-    LSendChatMsg(true,0,output,false,false)
+    SendChatMsg(true,0,output,false,false)
     return "sent!"
 }
 
