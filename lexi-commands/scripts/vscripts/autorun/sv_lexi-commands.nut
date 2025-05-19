@@ -472,7 +472,7 @@ function Loutputtable( tbl, indent = 0, maxDepth = 4 )
 {   
     local output = ""
 	output += ( TableIndent( indent ) )
-	output += PrintObject( tbl, indent, 0, maxDepth, output )
+	output += PrintObjectt( tbl, indent, 0, maxDepth, output )
     return output
 }
 
@@ -483,7 +483,7 @@ function TableIndent( indent )
 }
 
 
-function PrintObject( obj, indent, depth, maxDepth ,output )
+function PrintObjectt( obj, indent, depth, maxDepth ,output )
 {
 	if ( IsTable( obj ) )
 	{
@@ -497,7 +497,7 @@ function PrintObject( obj, indent, depth, maxDepth ,output )
 		foreach ( k, v in obj )
 		{
 			output += ( TableIndent( indent + 2 ) + "☻"+ k +"☻"+ " : " )
-			output = PrintObject( v, indent + 2, depth + 1, maxDepth ,output )
+			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
@@ -515,7 +515,7 @@ function PrintObject( obj, indent, depth, maxDepth ,output )
 		foreach ( v in obj )
 		{
 			output += ( TableIndent( indent + 2 ) )
-			output = PrintObject( v, indent + 2, depth + 1, maxDepth ,output )
+			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
