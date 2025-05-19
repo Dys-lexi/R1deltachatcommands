@@ -1,7 +1,7 @@
 function main() {
     Globalize(Ltitanfall)
     // !name, adminlevel (0 is everyone), should block the original message (non functional) function to run, description in !help, requires a sender (set this to true if the command uses player arg in any way)
-    Lregistercommand(["titanfall","tf"],1,true,Ltitanfall,"drop a titan args = [playername]",true)
+    Lregistercommand(["titanfall","tf"],1,true,Ltitanfall,"drop a titan args: [playername]",true)
    
 }
 

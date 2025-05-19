@@ -35,7 +35,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.7"
+    ::version <- "v0.1.8"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -312,7 +312,7 @@ function authfunction(player,args,outputless = false) {
 }
 function LSendChatMsg(who = true,from = 0, text = "", isteam = false, isdead = false, outputless = false){
     if (!outputless){
-         SendChatMsg(who,from,Lprefix()+ text,isteam,isdead)
+         SendChatMsg(who,from,Lprefix(typeof who != "bool")+ text,isteam,isdead)
     }
     print("CMDLINE<"+text+"/>CMDLINE")
 }
@@ -383,8 +383,12 @@ function Lonjoin(player) {
     LSendChatMsg(player,0,"Welcome "+player.GetPlayerName() +", type !help for commands" ,false,false)
 }
 
-function Lprefix(){
-    return "\x1b[38;5;190m[Lexicmd]\x1b[38;5;254m "
+function Lprefix(private = false){
+    if (!private){
+    return "\x1b[38;5;190m[Lexicmd]\x1b[38;5;254m "}
+    else{
+        return "\x1b[38;5;213m[Lexicmd]\x1b[38;5;254m "
+    }
 }
 
 function onmessage(whosentit, message, isteamchat)
