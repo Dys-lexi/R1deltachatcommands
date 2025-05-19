@@ -11,7 +11,7 @@ function main() {
     if (GetCurrentPlaylistName() == "campaign_carousel") {
         return
     }
-    Lregistercommand(["nominate","nm"],0,false,Lnominate,"Vote for the next map",true)
+    Lregistercommand(["nominate","nm"],0,false,Lnominate,"Vote for the next map args = [map]",true)
     Lregistercommand(["maps"],0,true,Lmaps,"Display all maps in rotation",true)
     
     if ( GetMapName() != "mp_lobby") {

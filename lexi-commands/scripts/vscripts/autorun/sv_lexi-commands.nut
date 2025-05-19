@@ -7,7 +7,8 @@ function main() {
     "throw",
     "nominate",
     "extend",
-    "skip"
+    "skip",
+    "titanfall"
     ]
 
     ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
@@ -34,13 +35,14 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.5"
+    ::version <- "v0.1.7"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
     Globalize(Lrconcommand)
     Globalize(Laddusedcommandtotable)
     Globalize(Lregistervote)
+    Globalize(Loutputtable)
     Globalize(Lvote)
     Globalize(LSendChatMsg)
     Globalize(Lgetplayersadminlevel)
@@ -51,7 +53,7 @@ function main() {
     adminlist.adminlevel2 <- []
     adminlist.adminlevel3 <- []
     Lregistercommand("help",0,false,helpfunction,"get help",true)
-    Lregistercommand("auth",0,true,authfunction,"become a admin",true,true)
+    Lregistercommand("auth",0,true,authfunction,"become an admin args = [password]",true,true)
     AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
@@ -459,5 +461,78 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
 // table.xyz = what
 
 // TrueTeamSwitch()
+
+
+
+function Loutputtable( tbl, indent = 0, maxDepth = 4 )
+{   
+    local output = ""
+	output += ( TableIndent( indent ) )
+	output += PrintObject( tbl, indent, 0, maxDepth, output )
+    return output
+}
+
+
+function TableIndent( indent )
+{
+	return ("                                            ").slice( 0, indent )
+}
+
+
+function PrintObject( obj, indent, depth, maxDepth ,output )
+{
+	if ( IsTable( obj ) )
+	{
+		if ( depth >= maxDepth )
+		{
+			output += ( "{...}" )
+			return
+		}
+
+		output += ( "{" )
+		foreach ( k, v in obj )
+		{
+			output += ( TableIndent( indent + 2 ) + "☻"+ k +"☻"+ " : " )
+			output = PrintObject( v, indent + 2, depth + 1, maxDepth ,output )
+            output += ","
+		}
+        output = output.slice(0,output.len()-1)
+		output += ( TableIndent( indent ) + "}" )
+	}
+	else if ( IsArray( obj ) )
+	{
+		if ( depth >= maxDepth )
+		{
+			output += ( "[...]" )
+			return
+		}
+
+		output += ( "[" )
+		foreach ( v in obj )
+		{
+			output += ( TableIndent( indent + 2 ) )
+			output = PrintObject( v, indent + 2, depth + 1, maxDepth ,output )
+            output += ","
+		}
+        output = output.slice(0,output.len()-1)
+		output += ( TableIndent( indent ) + "]" )
+	}
+    else if ( typeof obj == "string") 
+    {
+        // local quote = "☻"
+        output += ( "" + "☻"+ obj + "☻"  )
+    }
+	else if ( obj != null )
+	{
+		output += ( "" + obj )
+	}
+	else
+	{
+		output += ( "<null>" )
+	}
+    return output
+}
+
+
 
 main()

@@ -1,6 +1,6 @@
 function main() {
     Globalize(Lthrow)
-    Lregistercommand("throw",1,true,Lthrow,"throw a player into the air",true,false)
+    Lregistercommand("throw",1,true,Lthrow,"throw a player into the air args = [playername]",true,false)
    
 }
 
