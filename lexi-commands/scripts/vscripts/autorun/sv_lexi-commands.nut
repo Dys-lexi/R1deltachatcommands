@@ -53,7 +53,7 @@ function main() {
     adminlist.adminlevel2 <- []
     adminlist.adminlevel3 <- []
     Lregistercommand("help",0,false,helpfunction,"get help",true)
-    Lregistercommand("auth",0,true,authfunction,"become an admin args = [password]",true,true)
+    Lregistercommand("auth",0,true,authfunction,"become an admin args: [password]",true,true)
     AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
@@ -468,11 +468,11 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
 
 
 
-function Loutputtable( tbl, indent = 0, maxDepth = 4 )
+function Loutputtable( tbl, indent = 0, maxDepth = 4, replacechar = "☻" )
 {   
     local output = ""
 	output += ( TableIndent( indent ) )
-	output += PrintObjectt( tbl, indent, 0, maxDepth, output )
+	output += PrintObjectt( tbl, indent, 0, maxDepth, output,replacechar )
     return output
 }
 
@@ -483,7 +483,7 @@ function TableIndent( indent )
 }
 
 
-function PrintObjectt( obj, indent, depth, maxDepth ,output )
+function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
 {
 	if ( IsTable( obj ) )
 	{
@@ -496,8 +496,8 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output )
 		output += ( "{" )
 		foreach ( k, v in obj )
 		{
-			output += ( TableIndent( indent + 2 ) + "☻"+ k +"☻"+ " : " )
-			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output )
+			output += ( TableIndent( indent + 2 ) + replacechar+ k +replacechar+ " : " )
+			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output,replacechar )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
@@ -515,7 +515,7 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output )
 		foreach ( v in obj )
 		{
 			output += ( TableIndent( indent + 2 ) )
-			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output )
+			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output,replacechar )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
@@ -523,8 +523,8 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output )
 	}
     else if ( typeof obj == "string") 
     {
-        // local quote = "☻"
-        output += ( "" + "☻"+ obj + "☻"  )
+        // local quote = replacechar
+        output += ( "" + replacechar+ obj + replacechar  )
     }
 	else if ( obj != null )
 	{

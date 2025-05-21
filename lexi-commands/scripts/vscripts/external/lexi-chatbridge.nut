@@ -24,8 +24,14 @@ function LBonmessage(whosentit, message, isteamchat) {
         Laddusedcommandtotable(output,"command_message")
         return
     }
-         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-        Laddusedcommandtotable(output,"chat_message")
+        local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
+        local metadata = {}
+        metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
+        metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
+        metadata.uid <- GetEntByIndex(whosentit).GetUserId()
+        metadata.teamtype <- "not team"
+        // Laddusedcommandtotable(output+" "+GetEntByIndex(whosentit).GetModelName(),"chat_message",false)  OLD SYSTEM PFPLESS
+        Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
         return
 
     
