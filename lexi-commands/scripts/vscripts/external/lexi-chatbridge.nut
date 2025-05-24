@@ -11,7 +11,7 @@ function main() {
     }
 
     Globalize(Lsendmessage)
-    Lregistercommand("sendmessage",1,false,Lsendmessage,"send a chat message",false)
+    Lregistercommand("sendmessage",1,true,Lsendmessage,"send a chat message",false)
     AddCallback_OnClientConnected(Lconnect)
     AddCallback_OnClientDisconnected(Ldisconnect)
     AddCallback_OnClientChatMsg(LBonmessage)

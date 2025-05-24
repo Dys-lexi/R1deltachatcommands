@@ -35,7 +35,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.9"
+    ::version <- "v0.1.10"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -57,9 +57,9 @@ function main() {
     AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
-    AutoCVar("matchid","")
+    AutoCVar("matchid","ID<"+Daily_GetCurrentTime()+"/>ID")
     // AddCallback_OnPlayerKilled
-    ServerCommand("matchid "+ "ID<"+Daily_GetCurrentTime()+"/>ID")
+    // ServerCommand("matchid "+ "ID<"+Daily_GetCurrentTime()+"/>ID")
     AddClientCommandCallback( "l", commandrunner )
     foreach (mod in modfilenames) {
         printt("loading commandfile "+mod)
@@ -139,15 +139,15 @@ function Lvote(votename,player, voteweight = 1, forcenewvote = false ,args = [])
         }
     }
     // printt("VOTEWEIT"+voteweight)
-    local alreadyvoted = ArrayContains(TableKeysToArray(registeredvotes[votename].voted),player.GetEntIndex())
-    registeredvotes[votename].voted [player.GetEntIndex()] <- voteweight
+    local alreadyvoted = ArrayContains(TableKeysToArray(registeredvotes[votename].voted),player.GetUserId())
+    registeredvotes[votename].voted [player.GetUserId()] <- voteweight
 
     // add up votes
 
     local totalvote = 0
     local entitytable = []
     foreach (entindex in GetPlayerArray()){
-        entitytable.append(entindex.GetEntIndex())
+        entitytable.append(entindex.GetUserId())
     }
     foreach( key, val in registeredvotes[votename].voted){
         // printt("HERE"+key+val)
@@ -300,7 +300,7 @@ function authfunction(player,args,outputless = false) {
     foreach (key,password in adminpasswords) {
         if (password == args[0]) {
             sucsess = true
-            adminlist[key].append(player.GetPlayerName()+player.GetEntIndex())
+            adminlist[key].append(player.GetPlayerName()+player.GetUserId())
         }
     }
     if (!sucsess){
@@ -324,7 +324,7 @@ function authremove(player){
         local originallen = value.len()
         for (local index = 0 ;index < originallen; index++) {
             local name = value[keyoffset+index]
-            if (name == player.GetPlayerName()+player.GetEntIndex()) {
+            if (name == player.GetPlayerName()+player.GetUserId()) {
                 adminlist[key].remove(index+keyoffset)
                 keyoffset -= 1
                 // printt("REMOVED" + player.GetPlayerName()+player.GetEntIndex() )
@@ -340,7 +340,7 @@ function Lgetplayersadminlevel(player){
     local actuallevel = 0
     foreach (key,value in adminlist){
         levelw+=1
-        if (ArrayContains(value,player.GetPlayerName()+player.GetEntIndex())) {
+        if (ArrayContains(value,player.GetPlayerName()+player.GetUserId())) {
             actuallevel = levelw
         }
     }

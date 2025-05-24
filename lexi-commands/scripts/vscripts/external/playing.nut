@@ -1,7 +1,22 @@
 function main() {
-    Lregistercommand("playing",1,false,Lplaying,"get who is playing",false)
+    Lregistercommand("playing",4,false,Lplaying,"get who is playing",false)
+    Lregistercommand("playingpollidentity",4,false,Lplayingidentitys,"poll players",false)
     Globalize(Lplaying)
     
+}
+function Lplayingidentitys(args,outputless = false){
+    local stats = {}
+    foreach (player in GetPlayerArray()){
+        local playerstat = {}
+        playerstat.playername <- player.GetPlayerName()
+        playerstat.playerip <- player.GetPlayerIP()
+        stats[player.GetUserId()] <- playerstat   
+    }
+    local meta = {}
+    meta.map <- GetMapName()
+    meta.matchid <- GetConVarString("autocvar_matchid")
+    stats.meta <- meta
+    return Loutputtable(stats)
 }
 function Lplaying(args,outputless = false) {
         local MAPS = {}

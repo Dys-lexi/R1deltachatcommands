@@ -9,6 +9,8 @@ function main() {
 
 function Lextend(player,args,outputless = false){
     // PrintTable(level)
+             LSendChatMsg(true,0, GetRoundTimeLimit_ForGameMode()+"wdw"+GameTime.TimeLeftSeconds()+" "+GetServerVar( "gameEndTime" )+ " "+(GetCurrentPlaylistVarInt("AT_timelimit", 10)) ,false,false)
+             
     if (GetGameState() != eGameState.Playing){
           LSendChatMsg(player,0,"You must be in a game!",false,false,outputless)
         return
@@ -22,7 +24,18 @@ function Lextend(player,args,outputless = false){
         LSendChatMsg(true,0, player.GetPlayerName() +" has voted to extend the map ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
         if (response.votepassed) {
             LSendChatMsg(true,0, "Map extended for "+timeextend+" minutes!",false,false)
-            level.nv.gameEndTime +=(timeextend  * 60.0 ).tofloat()
+   
+            level.nv.gameEndTime +=(timeextend  * 60.0 ).tointeger()
+//             SetServerVar("gameEndTime",(GetServerVar( "gameEndTime" ) +timeextend*60) .tointeger() + "")
+// SetPlaylistVarOverride("CP_timelimit", (GetCurrentPlaylistVarInt("CP_timelimit", 10) + timeextend) + "")
+// SetPlaylistVarOverride("AT_timelimit", (GetCurrentPlaylistVarInt("AT_timelimit", 10) + timeextend) + "")
+// SetPlaylistVarOverride("CTF_timelimit", (GetCurrentPlaylistVarInt("CTF_timelimit", 10) + timeextend) + "")
+// SetPlaylistVarOverride("PS_timelimit", (GetCurrentPlaylistVarInt("PS_timelimit", 15) + timeextend) + "")
+// SetPlaylistVarOverride("HEIST_timelimit", (GetCurrentPlaylistVarInt("HEIST_timelimit", 6) + timeextend) + "")
+// SetPlaylistVarOverride("BB_timelimit", (GetCurrentPlaylistVarInt("BB_timelimit", 6) + timeextend) + "")
+// SetPlaylistVarOverride("SCV_timelimit", (GetCurrentPlaylistVarInt("SCV_timelimit", 10) + timeextend) + "")
+// SetPlaylistVarOverride("TDM_timelimit", (GetCurrentPlaylistVarInt("TDM_timelimit", 10) + timeextend) + "")
+
         }
     }
     else if (response.alreadyvoted) {

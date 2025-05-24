@@ -83,6 +83,9 @@ function main()
 	AddClientCommandCallback( "UpdatePrivateMatchSetting", ClientCommand_UpdatePrivateMatchSetting ) //
 	AddClientCommandCallback( "ResetMatchSettingsToDefault", ClientCommand_ResetMatchSettingsToDefault )
 	AddClientCommandCallback( "NewBlackMarketItemsViewed", ClientCommand_NewBlackMarketItemsViewed )
+	AddClientCommandCallback( "RequestServerChangeToLobbyType0", ClientCommand_RequestServerChangeToLobbyType0 )
+	AddClientCommandCallback( "TryKickPlayersForPersonalLobby", ClientCommand_TryKickPlayersForPersonalLobby )
+	AddCallback_OnClientConnected( Lobby_UpdateLobbyType )
 
 	GameRules.EnableGlobalChat( true )
 	IncludeFile("_burncards_shared")
@@ -468,11 +471,11 @@ function PrivateMatchLobbyLogic()
 	local lastTickTime
 
 	local mapName = GetLastServerMap()
-	if ( (mapName in getconsttable().ePrivateMatchMaps) ){
-		level.ui.privatematch_map = getconsttable().ePrivateMatchMaps[mapName]}
+	if ( (mapName in getconsttable().ePrivateMatchMaps) )
+		level.ui.privatematch_map = getconsttable().ePrivateMatchMaps[mapName]
 
 	local modeName = GetLastServerGameMode()
-	printt(mapName+"map1")
+
 	// I don't like ctf
     if (modeName == null)
 		modeName = "at"
@@ -491,6 +494,7 @@ function PrivateMatchLobbyLogic()
 		{
 			if ( level.ui.gameStartTime == null )
 			{
+                printt("Starting countdown!")
 				StartCountDown()
 				RefreshPlayerSkillRatings()
 			}
@@ -686,7 +690,7 @@ function MatchmakingServerLobbyLogic()
         if ( nextMapName == null )
             nextMapName = ""
         NoteLobbyState( report_timeRemaining, nextMapName )
-        wait 0.1
+         wait 0.1
         local next = LGetnextmap()
     if (next) {
         file.nextMapModeCombo = next
@@ -1304,14 +1308,13 @@ function Lobby_PickNextMapModeCombo( allowedMaps = null )
 
 		i++
 	}
-    
 
 	//printt( "==============================================" )
 	//printt( "selectionPool" )
 	//PrintTable( selectionPool )
-    
+
 	local nextCombo = Random( selectionPool )
-       local next = LGetnextmap()
+    local next = LGetnextmap()
     if (next && next != null) {
         nextCombo = next
     }
@@ -2076,6 +2079,8 @@ function ClientCommand_UpdatePrivateMatchSetting( player, ... )
 			break
 	}
 
+	SetPlaylistVarOverride( "private_match", "1" )
+
 	return true
 }
 
@@ -2083,6 +2088,70 @@ function ClientCommand_NewBlackMarketItemsViewed( player )
 {
 	player.SetPersistentVar( "bm.newBlackMarketItems", false )
 	return true
+}
+
+function ClientCommand_RequestServerChangeToLobbyType0( player )
+{
+	if ( !IsLobby() )
+		return true
+
+	if( IsDedicated() )
+		return true
+
+	if ( GetPlayerArray()[0] != player )
+		return true
+
+	if ( GetPlayerArray().len() > 1 )
+	{
+		if ( !IsPrivateMatch() )
+			return
+
+		for( local i = 0; i < GetPlayerArray().len(); i++ )
+		{
+			if ( i == 0 )
+				continue
+
+			ServerCommand(format("kickid %d \"Server Shutting Down\"", GetPlayerArray()[i].GetUserId()))
+		}
+	}
+
+	ServerCommand( "sv_lobbyType 0")
+}
+
+function ClientCommand_TryKickPlayersForPersonalLobby( player )
+{
+	if ( !IsLobby() )
+		return true
+
+	if( IsDedicated() )
+		return true
+
+	if ( GetPlayerArray()[0] != player )
+		return true
+
+	if ( GetPlayerArray().len() > 1 )
+	{
+		for( local i = 0; i < GetPlayerArray().len(); i++ )
+		{
+			if ( i == 0 )
+				continue
+
+			ServerCommand(format("kickid %d \"Server Shutting Down\"", GetPlayerArray()[i].GetUserId()))
+		}
+	}
+}
+
+// helpful on a direct connect
+function Lobby_UpdateLobbyType( player )
+{
+	if ( !IsLobby() )
+		return true
+
+	if ( GetConVarBool("sv_lobbyType") )
+		return true
+
+	if ( GetPlayerArray().len() > 1 )
+	    ServerCommand( "sv_lobbyType 1" )
 }
 
 function GetMappedValueFromPrivateMatchVar( pmVarName, pmVarSetting )
@@ -2141,7 +2210,7 @@ function UpdatePrivateMatchMapIfUnavailable()
 
 		if ( !ServerHasDLCMapGroupEnabled( dlcGroup ) )
 		{
-			level.ui.privatematch_map = getconsttable().ePrivateMatchMaps["mp_nexus"]
+			level.ui.privatematch_map = getconsttable().ePrivateMatchMaps["mp_fracture"]
 			UpdatePrivateMatchReadyStatus( true )
 		}
 	}
@@ -2156,6 +2225,6 @@ function UpdateCustomMatchMapIfUnavailable()
 	local dlcGroup = GetDLCMapGroupForMap( mapName )
 	if ( ServerHasDLCMapGroupEnabled( dlcGroup ) )
 		return
-	level.ui.privatematch_map = getconsttable().ePrivateMatchMaps["mp_lagoon"]
-}
 
+	level.ui.privatematch_map = getconsttable().ePrivateMatchMaps["mp_fracture"]
+}
