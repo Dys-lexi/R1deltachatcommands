@@ -8,7 +8,8 @@ function main() {
     "nominate",
     "extend",
     "skip",
-    "titanfall"
+    "titanfall",
+    "rcon"
     ]
 
     ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
@@ -35,7 +36,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.10"
+    ::version <- "v0.1.11"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
