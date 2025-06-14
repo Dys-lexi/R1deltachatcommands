@@ -6,10 +6,11 @@ function main() {
     "gravitymod",
     "throw",
     "nominate",
-    "extend",
+    // "extend",
     "skip",
     "titanfall",
-    "rcon"
+    "rcon",
+    "discord"
     ]
 
     ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
@@ -36,7 +37,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.11"
+    ::version <- "v0.1.12"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
