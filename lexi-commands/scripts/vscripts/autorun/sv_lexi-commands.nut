@@ -37,7 +37,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.1.12"
+    ::version <- "v0.2.0"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
