@@ -1,16 +1,27 @@
 function main() {
     Lregistercommand("playing",4,false,Lplaying,"get who is playing",false)
-    Lregistercommand("playingpollidentity",4,false,Lplayingidentitys,"poll players",false)
+    Lregistercommand("playingpoll",4,false,Lplayingidentitys,"poll players",false)
     Globalize(Lplaying)
-    
+    ::peoplejointimes <- {}
+    AddCallback_OnClientConnected(Lonjoinplaying)
+}
+function Lonjoinplaying(player) {
+    peoplejointimes[player.GetUserId()] <-  GetUnixTimestamp()
 }
 function Lplayingidentitys(args,outputless = false){
     local stats = {}
     foreach (player in GetPlayerArray()){
         local playerstat = {}
-        playerstat.playername <- player.GetPlayerName()
+        playerstat.name <- player.GetPlayerName()
         playerstat.playerip <- player.GetPlayerIP()
-        stats[player.GetUserId()] <- playerstat   
+        playerstat.score <- UpdateScore(player)
+        playerstat.team <- player.GetTeam() == TEAM_IMC ? "imc" : "militia"
+        playerstat.kills <- UpdateKills(player)
+        playerstat.deaths <- UpdateDeaths(player)
+        playerstat.titankills <- UpdateTitanKills(player)
+        playerstat.npckills <- UpdateNPCKills(player)
+        playerstat.timecounter <- peoplejointimes[player.GetUserId()]
+        stats[player.GetPlatformUserId()] <- playerstat   
     }
     local meta = {}
     meta.map <- GetMapName()

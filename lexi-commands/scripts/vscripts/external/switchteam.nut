@@ -6,6 +6,10 @@ function main() {
 }
 
 function Lswitchteam(player,args,outputless = false){
+    if ( GetGameState() == eGameState.Epilogue) {
+        LSendChatMsg(player,0,"Cannot switch at this time",false,false,outputless)
+        return true
+    }
     LSendChatMsg(true,0,player.GetPlayerName() +" Switched teams",false,false,outputless)
     player.TrueTeamSwitch()
     return true
