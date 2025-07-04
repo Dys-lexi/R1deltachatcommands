@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge",
+    "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
@@ -13,7 +13,7 @@ function main() {
     "discord"
     ]
 
-    ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
+    ::adminenabled <- true //CHANGE THE PASSWORDS :) (then enable)
     ::adminpasswords <- {}
     adminpasswords.adminlevel1 <- "level1AUTH"
     adminpasswords.adminlevel2 <- "level2AUTH"
@@ -198,7 +198,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
                         local player = 0
                         local match = "what"
                         if (typeof args == "string"){
-                                args = [args]
+                                args = split(args, " ")
                             }
                         if (val.requiressender){
                             if (args.len() == 0){

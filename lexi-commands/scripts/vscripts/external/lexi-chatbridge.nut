@@ -3,7 +3,8 @@
 function main() {
 
     local modfilenames = [
-    "playing"
+    "playing",
+    "privatemessage"
     ]
     foreach (mod in modfilenames) {
         printt("loading commandfileb "+mod)
@@ -78,13 +79,26 @@ function nextmap(){
     }
 }
 
+function requeststats (player){
+    wait 2
+            local playerdata = {}
+        playerdata.playeruid <- player.GetEntIndex()
+    playerdata.playerdiscorduid <- player.GetPlatformUserId()
+    playerdata.playername <- player.GetPlayerName()
+    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"stats")
+}
 
 function Lconnect (player){
+
+    thread requeststats(player)
     if (Time() < 15) {
         return
     }
     local output = player.GetPlayerName() + " has joined the server (" + GetPlayerArray().len() + " Connected)"
     Laddusedcommandtotable(output,"connect_message")
+
+
+
 }
 
 function Ldisconnect (player){
