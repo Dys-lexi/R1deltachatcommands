@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    "lexi-chatbridge",
+    // "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
@@ -13,7 +13,7 @@ function main() {
     "discord"
     ]
 
-    ::adminenabled <- true //CHANGE THE PASSWORDS :) (then enable)
+    ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
     ::adminpasswords <- {}
     adminpasswords.adminlevel1 <- "level1AUTH"
     adminpasswords.adminlevel2 <- "level2AUTH"
@@ -37,7 +37,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.0"
+    ::version <- "v0.2.1"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
