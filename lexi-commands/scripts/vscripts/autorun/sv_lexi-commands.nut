@@ -240,7 +240,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
 
             }
             if (!foundsomething) {
-                printt("OUTPUT<Command not found/>ENDOUTPUT")
+                printt("OUTPUT<Command not found "+keyword + "/>ENDOUTPUT")
             }
 
 
@@ -362,6 +362,7 @@ function helpfunction(player,args,outputless = false) {
 }
 
 function Lgetentitysfromname(name) {
+    name = StringReplace(name,"♦"," ")
     local output = []
     if (name == "_") {
         return GetPlayerArray()

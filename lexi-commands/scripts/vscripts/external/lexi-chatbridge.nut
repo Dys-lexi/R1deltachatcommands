@@ -4,7 +4,8 @@ function main() {
 
     local modfilenames = [
     "playing",
-    "privatemessage"
+    "privatemessage",
+    "stats"
     ]
     foreach (mod in modfilenames) {
         printt("loading commandfileb "+mod)
@@ -12,24 +13,36 @@ function main() {
     }
 
     Globalize(Lsendmessage)
+    Globalize(helpdc)
     Lregistercommand("sendmessage",1,true,Lsendmessage,"send a chat message",false)
+    Lregistercommand("helpdc",0,true,helpdc,"get the discord help list",false)
     AddCallback_OnClientConnected(Lconnect)
     AddCallback_OnClientDisconnected(Ldisconnect)
     AddCallback_OnClientChatMsg(LBonmessage)
     thread nextmap()
 }
+function helpdc(a,b,c){
+    return true
+}
+
 function LBonmessage(whosentit, message, isteamchat) {
     
     if ((message.len() > 1 && format("%c", message[0]) == "!" ) || (message.len() > 2 && format("%c", message[0]) == "t"  &&format("%c", message[1]) == "!" ) ) {
-        local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-        Laddusedcommandtotable(output,"command_message")
+        local output = message
+        local metadata = {}
+        metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
+        metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
+        metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
+        metadata.entid <- whosentit
+        metadata.teamtype <- "not team"
+        Laddusedcommandtotable(output,"command_message",Loutputtable(metadata,0,4,"♥"))
         return
     }
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
         local metadata = {}
         metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
         metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
-        metadata.uid <- GetEntByIndex(whosentit).GetUserId()
+        metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
         metadata.teamtype <- "not team"
         // Laddusedcommandtotable(output+" "+GetEntByIndex(whosentit).GetModelName(),"chat_message",false)  OLD SYSTEM PFPLESS
         Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
@@ -39,7 +52,7 @@ function LBonmessage(whosentit, message, isteamchat) {
     
 }
 function nextmap(){
-    wait 10
+    // wait 10
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
@@ -83,9 +96,9 @@ function requeststats (player){
     wait 2
             local playerdata = {}
         playerdata.playeruid <- player.GetEntIndex()
-    playerdata.playerdiscorduid <- player.GetPlatformUserId()
-    playerdata.playername <- player.GetPlayerName()
-    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"stats")
+    playerdata.uid <- player.GetPlatformUserId()
+    playerdata.name <- player.GetPlayerName()
+    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
 }
 
 function Lconnect (player){
@@ -108,16 +121,31 @@ function Ldisconnect (player){
 }
 
 function Lsendmessage(args,outputless = false){
+    local who = args[0]
+    args.remove(0)
+    local player = true
+    // printt("who "+who)
     if ( GetPlayerArray().len() == 0) {
         return "failed! 0 playing"
     }
+    if (who != "placeholder"){
+        foreach(person in GetPlayerArray()){
+            if (StringContains(who,person.GetPlatformUserId())){
+                player = person
+            }
+        }
+        if (player == true){
+            return "failed! person not found"
+        }
+    }
+
     local output = ""
 
         foreach(arg in args) {
             output += arg + " "
         }
     
-    SendChatMsg(true,0,output,false,false)
+    SendChatMsg(player,0,output,false,false)
     return "sent!"
 }
 
