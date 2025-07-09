@@ -37,7 +37,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.2"
+    ::version <- "v0.2.3"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -188,6 +188,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
     // ServerCommand("sv_cheats 0 ")
         // printt(args)
         // printt(Time() + "w")
+        printt("keyword "+keyword + " args "+args)
          local foundsomething = false
         foreach( key, val in registeredcommands) {
            
@@ -362,7 +363,7 @@ function helpfunction(player,args,outputless = false) {
 }
 
 function Lgetentitysfromname(name) {
-    name = StringReplace(name,"♦"," ")
+    // name = StringReplace(name,"♦"," ")
     local output = []
     if (name == "_") {
         return GetPlayerArray()
