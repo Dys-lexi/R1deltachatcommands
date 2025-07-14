@@ -11,16 +11,16 @@ function Lonjoinplaying(player) {
 function Lplayingidentitys(args,outputless = false){
     local stats = {}
     foreach (player in GetPlayerArray()){
-        local playerstat = {}
-        playerstat.name <- player.GetPlayerName()
-        playerstat.playerip <- player.GetPlayerIP()
-        playerstat.score <- UpdateScore(player)
-        playerstat.team <- player.GetTeam() == TEAM_IMC ? "imc" : "militia"
-        playerstat.kills <- UpdateKills(player)
-        playerstat.deaths <- UpdateDeaths(player)
-        playerstat.titankills <- UpdateTitanKills(player)
-        playerstat.npckills <- UpdateNPCKills(player)
-        playerstat.timecounter <- peoplejointimes[player.GetUserId()]
+        local playerstat = []
+        playerstat.append(player.GetPlayerName())
+        // playerstat.playerip <- player.GetPlayerIP() not used anywhere, removed to save space
+        playerstat.append(UpdateScore(player))
+        // playerstat.team <- player.GetTeam() == TEAM_IMC ? "imc" : "militia" not used anywhere, save space
+        playerstat.append(UpdateKills(player))
+        playerstat.append(UpdateDeaths(player))
+        playerstat.append(UpdateTitanKills(player))
+        playerstat.append(UpdateNPCKills(player))
+        playerstat.append(peoplejointimes[player.GetUserId()])
         stats[player.GetPlatformUserId()] <- playerstat   
     }
     local meta = {}

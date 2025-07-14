@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge",
+    "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
