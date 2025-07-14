@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    "lexi-chatbridge",
+    // "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
@@ -37,7 +37,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.3"
+    ::version <- "v0.2.4"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
