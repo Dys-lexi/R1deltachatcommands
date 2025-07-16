@@ -20,11 +20,11 @@ function Lplayingidentitys(args,outputless = false){
         playerstat.append(UpdateDeaths(player))
         playerstat.append(UpdateTitanKills(player))
         playerstat.append(UpdateNPCKills(player))
-        if ArrayContains(TableKeysToArray(peoplejointimes),player.GetUserId()){
+        if (ArrayContains(TableKeysToArray(peoplejointimes),player.GetUserId())){
         playerstat.append(peoplejointimes[player.GetUserId()])}
         else{
             Lonjoinplaying(player)
-             playerstat.append(peoplejointimes[player.GetUserId()])}
+             playerstat.append(peoplejointimes[player.GetUserId()])
         }
         stats[player.GetPlatformUserId()] <- playerstat   
     }

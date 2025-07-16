@@ -14,7 +14,7 @@ function main() {
 
     Globalize(Lsendmessage)
     Globalize(helpdc)
-    Lregistercommand("sendmessage",1,true,Lsendmessage,"send a chat message",false)
+    Lregistercommand("sendmessage",4,true,Lsendmessage,"send a chat message",false)
     Lregistercommand("helpdc",0,true,helpdc,"get the discord help list",false)
     AddCallback_OnClientConnected(Lconnect)
     AddCallback_OnClientDisconnected(Ldisconnect)
