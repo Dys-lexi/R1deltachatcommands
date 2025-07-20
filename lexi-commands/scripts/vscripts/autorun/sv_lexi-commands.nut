@@ -11,6 +11,7 @@ function main() {
     "titanfall",
     "rcon",
     "discord"
+    "hostiletitanfallinbound"
     ]
 
     ::adminenabled <- false //CHANGE THE PASSWORDS :) (then enable)
@@ -37,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.6"
+    ::version <- "v0.2.8"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Lgetentitysfromname)
@@ -269,7 +270,7 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         Aliases = keywords[0]
         for (local i = 1; i < keywords.len() ;i++)
         {
-            Aliases += "\x1b[38;5;254m, \x1b[38;5;201m"+keywords[i]
+            Aliases += "\x1b[38;5;254m, \x1b[38;5;219m"+keywords[i]
         }
     }
     
@@ -352,12 +353,14 @@ function Lgetplayersadminlevel(player){
 function helpfunction(player,args,outputless = false) {
     LSendChatMsg(player,0, "help menu! ("+version+")",false,false)
     local sentids = []
+    local i = 0
     foreach( key, val in registeredcommands) {
         if (val.adminlevel > Lgetplayersadminlevel(player) || ArrayContains(sentids,val.id)) {
             continue
         }
+        i+=1
         sentids.append(val.id)
-        LSendChatMsg(player,0,"\x1b[38;5;201m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
+        LSendChatMsg(player,0,"\x1b[38;5;220m"+ i + ") \x1b[38;5;219m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
     }
     return true
 }
