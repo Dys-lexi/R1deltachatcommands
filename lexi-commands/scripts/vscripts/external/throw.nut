@@ -24,7 +24,7 @@ function Lthrow(player,args,outputless = false){
 }
 
 
-    if (args.len() != 1){
+    if (args.len() < 1){
         return "invalid argument count"
     }
     if (GetMapName() == "mp_lobby") {

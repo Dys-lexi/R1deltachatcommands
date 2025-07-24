@@ -24,7 +24,7 @@ function Lhostiletf(player, args, outputless = false) {
         return "Ran on " + playersranon + " (" + (players.len() - notatitan) + "/" + players.len() + ")"
     }
 
-    if (args.len() != 1) {
+    if (args.len() < 1) {
         return "Invalid argument count"
     }
 
