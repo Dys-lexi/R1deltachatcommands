@@ -6,11 +6,12 @@ function main() {
 }
 
 function Lswitchteam(player,args,outputless = false){
-    if ( GetGameState() == eGameState.Epilogue) {
+    local forceSwitch = true
+    if ( !ShouldAutoBalancePlayer( player, forceSwitch )) {
         LSendChatMsg(player,0,"Cannot switch at this time",false,false,outputless)
         return true
     }
     LSendChatMsg(true,0,player.GetPlayerName() +" Switched teams",false,false,outputless)
-    player.TrueTeamSwitch()
+    AutoBalancePlayer( player, forceSwitch )
     return true
 }
