@@ -41,6 +41,7 @@ function main() {
     ::version <- "v0.2.9"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
+    Globalize(Laddmute)
     Globalize(Lgetentitysfromname)
     Globalize(Lrconcommand)
     Globalize(Laddusedcommandtotable)
@@ -51,6 +52,7 @@ function main() {
     Globalize(Lgetplayersadminlevel)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
+    ::mutedplayers <- {}
     ::adminlist <- {}
     adminlist.adminlevel1 <- []
     adminlist.adminlevel2 <- []
@@ -72,6 +74,12 @@ function main() {
 }
 
 // if (Lcommandcheck(["switch","st"],0,command))
+function Laddmute(who,expire,reason) {
+    local mute = {}
+    mute.expiry <- expire
+    mute.reason <- reason
+    mutedplayers[who] <- mute
+}
 function Lregistervote(votename,percentageaccept,minaccept,timelimit = 0, cooldown = 0, extendtimelimitonvote = 30){
     local newvote = {}
     if (timelimit == 0){
@@ -449,6 +457,11 @@ function onmessage(whosentit, message, isteamchat)
         // }
         if (!found){
             // printt("Here")
+        if (whosentit.GetPlayerName() in mutedplayers){
+            LSendChatMsg(whosentit,0,"You've been muted, Expires on" + mutedplayers[whosentit.GetPlayerName()].expiry ,false,false,false)
+            LSendChatMsg(whosentit,0,"Reason" + mutedplayers[whosentit.GetPlayerName()].reason + "(use !discord to appeal / if you think was in error)",false,false,false)
+            return ""
+        }
         return message}
         else{
             // printt("HERE")
@@ -478,6 +491,7 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
 function Loutputtable( tbl, indent = 0, maxDepth = 4, replacechar = "☻" )
 {   
     local output = ""
+    indent = 0
 	output += ( TableIndent( indent ) )
 	output += PrintObjectt( tbl, indent, 0, maxDepth, output,replacechar )
     return output
@@ -492,6 +506,7 @@ function TableIndent( indent )
 
 function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
 {
+    
 	if ( IsTable( obj ) )
 	{
 		if ( depth >= maxDepth )

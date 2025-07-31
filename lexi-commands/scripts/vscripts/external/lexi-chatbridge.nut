@@ -6,6 +6,7 @@ function main() {
     "playing",
     "privatemessage",
     "stats"
+    "bansystem"
     ]
     foreach (mod in modfilenames) {
         printt("loading commandfileb "+mod)
@@ -149,4 +150,3 @@ function Lsendmessage(args,outputless = false){
     return "sent!"
 }
 
-main()
