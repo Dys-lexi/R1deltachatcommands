@@ -12,6 +12,11 @@ function Lswitchteam(player,args,outputless = false){
         return true
     }
     LSendChatMsg(true,0,player.GetPlayerName() +" Switched teams",false,false,outputless)
-    AutoBalancePlayer( player, forceSwitch )
+
+	if ( IsLobby() )
+        player.TrueTeamSwitch()
+	else
+        AutoBalancePlayer( player, forceSwitch )
+
     return true
 }
