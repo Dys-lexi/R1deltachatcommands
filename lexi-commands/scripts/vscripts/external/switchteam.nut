@@ -7,7 +7,7 @@ function main() {
 
 function Lswitchteam(player,args,outputless = false){
     local forceSwitch = true
-    if ( !ShouldAutoBalancePlayer( player, forceSwitch )) {
+    if ( !IsLobby() && !ShouldAutoBalancePlayer( player, forceSwitch )) {
         LSendChatMsg(player,0,"Cannot switch at this time",false,false,outputless)
         return true
     }
