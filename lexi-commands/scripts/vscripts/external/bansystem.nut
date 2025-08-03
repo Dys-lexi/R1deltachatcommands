@@ -24,10 +24,10 @@ function Lenforcemute(args,outputless = false){
             hasseasonreason = true
         }
         else if (!hasseasonreason){
-            expiry += arg + " "
+            expiry += args[i] + " "
         }
         else {
-            reason += arg + " "
+            reason += args[i] + " "
         }
     }
     Laddmute(args[0],expiry,reason)

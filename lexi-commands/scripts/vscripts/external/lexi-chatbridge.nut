@@ -32,7 +32,7 @@ function LBonmessage(whosentit, message, isteamchat) {
         local output = message
         local metadata = {}
         metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
-        metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
+        metadata.name <- GetEntByIndex(whosentit).GetPlayerName() 
         metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
         metadata.entid <- whosentit
         metadata.teamtype <- "not team"
@@ -41,6 +41,7 @@ function LBonmessage(whosentit, message, isteamchat) {
     }
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
         local metadata = {}
+        metadata.ismuted <-  GetEntByIndex(whosentit).GetUserId() + "" in Lgetmutes()
         metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
         metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
         metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()

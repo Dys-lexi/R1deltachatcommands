@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.10"
+    ::version <- "v0.2.11"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -50,8 +50,10 @@ function main() {
     Globalize(Lvote)
     Globalize(LSendChatMsg)
     Globalize(Lgetplayersadminlevel)
+    Globalize(Lgetmutes)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
+
     ::mutedplayers <- {}
     ::adminlist <- {}
     adminlist.adminlevel1 <- []
@@ -79,6 +81,9 @@ function Laddmute(who,expire,reason) {
     mute.expiry <- expire
     mute.reason <- reason
     mutedplayers[who] <- mute
+}
+function Lgetmutes(){
+    return mutedplayers
 }
 function Lregistervote(votename,percentageaccept,minaccept,timelimit = 0, cooldown = 0, extendtimelimitonvote = 30){
     local newvote = {}
@@ -408,6 +413,13 @@ function Lprefix(private = false){
 
 function onmessage(whosentit, message, isteamchat)
 {
+    local forcereturn = message
+             if ( GetEntByIndex(whosentit).GetUserId() + "" in mutedplayers){
+            SendChatMsg(GetEntByIndex(whosentit),0,"\x1b[111m"+GetEntByIndex(whosentit).GetPlayerName() + "\x1b[110m: "+message,false,false,false)
+            LSendChatMsg(GetEntByIndex(whosentit),0,"You've been muted, Expires on: " + mutedplayers[GetEntByIndex(whosentit).GetUserId()+ "" ].expiry ,false,false,false)
+            LSendChatMsg(GetEntByIndex(whosentit),0,"(use !discord to appeal / if you think was in error) Reason: " + mutedplayers[GetEntByIndex(whosentit).GetUserId()+ "" ].reason ,false,false,false)
+            forcereturn = ""
+        }
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
         // if (registercommandsasconvar) {
         // Laddusedcommandtotable(output,"chat_message")}
@@ -457,12 +469,9 @@ function onmessage(whosentit, message, isteamchat)
         // }
         if (!found){
             // printt("Here")
-        if (whosentit.GetPlayerName() in mutedplayers){
-            LSendChatMsg(whosentit,0,"You've been muted, Expires on" + mutedplayers[whosentit.GetPlayerName()].expiry ,false,false,false)
-            LSendChatMsg(whosentit,0,"Reason" + mutedplayers[whosentit.GetPlayerName()].reason + "(use !discord to appeal / if you think was in error)",false,false,false)
-            return ""
-        }
-        return message}
+        
+   
+        return forcereturn}
         else{
             // printt("HERE")
             return ""
