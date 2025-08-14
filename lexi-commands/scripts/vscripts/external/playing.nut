@@ -30,11 +30,11 @@ function Lplayingidentitys(args,outputless = false){
     }
     local meta = {}
     meta.map <- GetMapName()
-    meta.matchid <- GetConVarString("autocvar_matchid")
+    meta.matchid <- Lgetmatchid()
     stats.meta <- meta
-    return Loutputtable(stats)
+    returnfunc(Loutputtable(stats))
 }
-function Lplaying(args,outputless = false) {
+function Lplaying(args,returnfunc) {
         local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
@@ -81,7 +81,7 @@ function Lplaying(args,outputless = false) {
     else{
     stats.meta <- [ MAPS[GetMapName()],0] 
     }
-    return Loutputtable(stats)
+    returnfunc(Loutputtable(stats))
 
 }
 

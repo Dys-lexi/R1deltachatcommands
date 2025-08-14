@@ -5,7 +5,7 @@ function main() {
    
 }
 
-function Lskip(player,args,outputless = false){
+function Lskip(player,args,returnfunc){
     local response = Lvote("skip",player,1,false,args)
     // PrintTable(response)
     function skipmap() {
@@ -13,21 +13,21 @@ function Lskip(player,args,outputless = false){
     SetGameState( eGameState.Postmatch )
 }
     if (!response.voteispossible) {
-         LSendChatMsg(player,0,"not enough people online to pass vote ("+response.votesneeded+" needed)",false,false,outputless)
+         returnfunc("not enough people online to pass vote ("+response.votesneeded+" needed)")
     }
     else if (response.message == "voted") {
-        LSendChatMsg(true,0, player.GetPlayerName() +" has voted to skip the map ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        returnfunc(player.GetPlayerName() +" has voted to skip the map ("+response.votes+"/"+response.votesneeded+" votes)", true)
         if (response.votepassed) {
-            LSendChatMsg(true,0, "Skipping the map!",false,false)
+            returnfunc("Skipping the map!", true)
             // level.matchTimeLimitSeconds <- (level.matchTimeLimitSeconds - Time() +timeextend  * 60.0 ).tofloat()
             thread skipmap()
         }
     }
     else if (response.alreadyvoted) {
-        LSendChatMsg(true,0, player.GetPlayerName() +" Really wants to skip the map! ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        returnfunc(player.GetPlayerName() +" Really wants to skip the map! ("+response.votes+"/"+response.votesneeded+" votes)", true)
     }
     else {
-        LSendChatMsg(player,0,"error with voting",false,false,outputless)
+        returnfunc("error with voting")
     }
     // else if (response.oncooldown) {
     //     LSendChatMsg(player,0,"Extend is on cooldown for " + (response.extendcooldown).tointeger()+ " more seconds",false,false)

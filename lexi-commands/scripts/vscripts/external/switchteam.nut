@@ -5,13 +5,13 @@ function main() {
    
 }
 
-function Lswitchteam(player,args,outputless = false){
+function Lswitchteam(player,args,returnfunc){
     local forceSwitch = true
     if ( !IsLobby() && !ShouldAutoBalancePlayer( player, forceSwitch )) {
-        LSendChatMsg(player,0,"Cannot switch at this time",false,false,outputless)
+        returnfunc("Cannot switch at this time")
         return true
     }
-    LSendChatMsg(true,0,player.GetPlayerName() +" Switched teams",false,false,outputless)
+    returnfunc(player.GetPlayerName() +" Switched teams", true)
 
 	if ( IsLobby() )
         player.TrueTeamSwitch()

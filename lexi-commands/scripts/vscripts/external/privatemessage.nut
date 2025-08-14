@@ -5,7 +5,7 @@ function main() {
    
 }
 
-function privatemessage(args,outputless = false){
+function privatemessage(args,returnfunc){
     // local players = Lgetentitysfromname(args[0])
     // printt("xyzabc "+ args.len()+ "   "+args[0])
     // PrintTable(args)

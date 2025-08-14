@@ -24,7 +24,7 @@ function main() {
 
 
 
-    // ^settings^ 
+    // ^SETTINGS ABOVE DON'T TOUCH STUFF BELOW FOR MOST PART^ 
 
 
 
@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.2.11"
+    ::version <- "v0.3.0"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -51,11 +51,15 @@ function main() {
     Globalize(LSendChatMsg)
     Globalize(Lgetplayersadminlevel)
     Globalize(Lgetmutes)
+    Globalize(Lgetmatchid)
+    Globalize(Lpulldata)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
 
     ::mutedplayers <- {}
     ::adminlist <- {}
+    ::hasinited <- false
+    ::tf1tobot <- ""
     adminlist.adminlevel1 <- []
     adminlist.adminlevel2 <- []
     adminlist.adminlevel3 <- []
@@ -64,9 +68,12 @@ function main() {
     AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
-    AutoCVar("matchid","ID<"+Daily_GetCurrentTime()+"/>ID")
+    AutoCVar("Lreaderv2","")
+    AutoCVar("Lreader2v2","")
+    ::matchid <- Daily_GetCurrentTime()+GetMapName()
+    // AutoCVar("matchid",""+Daily_GetCurrentTime()+GetMapName()+"")
     // AddCallback_OnPlayerKilled
-    // ServerCommand("matchid "+ "ID<"+Daily_GetCurrentTime()+"/>ID")
+    // thread updatematchid()
     AddClientCommandCallback( "l", commandrunner )
     foreach (mod in modfilenames) {
         printt("loading commandfile "+mod)
@@ -75,6 +82,9 @@ function main() {
    
 }
 
+function Lgetmatchid(){
+    return matchid
+}
 // if (Lcommandcheck(["switch","st"],0,command))
 function Laddmute(who,expire,reason) {
     local mute = {}
@@ -202,7 +212,7 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
     // ServerCommand("sv_cheats 0 ")
         // printt(args)
         // printt(Time() + "w")
-        printt("keyword "+keyword + " args "+args)
+        // printt("keyword "+keyword + " args "+args)
          local foundsomething = false
         foreach( key, val in registeredcommands) {
            
@@ -241,15 +251,21 @@ function Lrconcommand(keyword,args = [],id = RandomInt( 0, 10000 )){
                         // printt("HERE4")
                         
                         local output = false
-                        print("FUNCRETURN<")
-                        if (val.requiressender) {
-                          output = val.inputfunction(player,args,true)}
-                        else {
-                             output = val.inputfunction(args,true)
-                        }
-                        print("/>FUNCRETURN")
+                        // print("FUNCRETURN<")
+                            function returnfunc(message,whoto = false){
+                                print(message)
+                            }
                         print("BEGINMAINOUT")
-                        printt("OUTPUT<"+output+"/>ENDOUTPUT")
+                         print("OUTPUT<")
+                        if (val.requiressender) {
+                          val.inputfunction(player,args,returnfunc)}
+                        else {
+                          val.inputfunction(args,returnfunc)
+                        }
+                        printt("/>ENDOUTPUT")
+                        // print("/>FUNCRETURN")
+                        // print("BEGINMAINOUT")
+                        // printt("OUTPUT<"+output+"/>ENDOUTPUT")
                         // Laddusedcommandtotable("auto","console_rcon", output, id)
                     }
 
@@ -271,7 +287,12 @@ function commandrunner(player, args) {
         printt("outputaaarg"+outputarg)
         onmessage(player.GetEntIndex(),outputarg,false)
     }
-
+// keywords=aliases for command. NEEDED. adminlevel = admin level need to run the command. NEEDED. 
+// blockchatmessage= should block. NEEDED.
+// inputfunction = the command itself. NEEDED
+// description = NEEDED
+// requiressender = NEEDED - disables rcon use if true, as well, I think? unsure.
+// only one match = needed - very needed!
 function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,description,requiressender = true,onlyonematch = true){
     local Aliases = ""
     if (type(keywords) == "string"){
@@ -304,13 +325,15 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         
     }
 }
-function authfunction(player,args,outputless = false) {
+function authfunction(player,args,returnfunc) {
     if (args.len() == 0) {
-        LSendChatMsg(player,0, "include a password!!!",false,false,outputless)
+        returnfunc("include a password!!!")
+        // LSendChatMsg(player,0, "include a password!!!",false,false,outputless)
         return
     }
     else if (!adminenabled) {
-        LSendChatMsg(player,0, "admin is disabled",false,false,outputless)
+        returnfunc("admin is disabled")
+        // LSendChatMsg(player,0, "admin is disabled",false,false,outputless)
         return
     }
     local sucsess = false
@@ -363,8 +386,8 @@ function Lgetplayersadminlevel(player){
     }
     return actuallevel
 }
-function helpfunction(player,args,outputless = false) {
-    LSendChatMsg(player,0, "help menu! ("+version+")",false,false)
+function helpfunction(player,args,returnfunc) {
+    returnfunc("help menu! ("+version+")")
     local sentids = []
     local i = 0
     foreach( key, val in registeredcommands) {
@@ -373,7 +396,7 @@ function helpfunction(player,args,outputless = false) {
         }
         i+=1
         sentids.append(val.id)
-        LSendChatMsg(player,0,"\x1b[38;5;220m"+ i + ") \x1b[38;5;219m" +val.Aliases+": \x1b[38;5;254m "+ val.description ,false,false)
+        returnfunc("\x1b[38;5;220m"+ i + ") \x1b[38;5;219m" +val.Aliases+": \x1b[38;5;254m "+ val.description)
     }
     return true
 }
@@ -413,6 +436,7 @@ function Lprefix(private = false){
 
 function onmessage(whosentit, message, isteamchat)
 {
+
     local forcereturn = message
              if ( GetEntByIndex(whosentit).GetUserId() + "" in mutedplayers){
             SendChatMsg(GetEntByIndex(whosentit),0,"\x1b[111m"+GetEntByIndex(whosentit).GetPlayerName() + "\x1b[110m: "+message,false,false,false)
@@ -447,13 +471,17 @@ function onmessage(whosentit, message, isteamchat)
                 foreach( key, val in registeredcommands) {
                     // printt("HEREEREREERE"+ key + " |" + cmd + "|  woa")
                     if (cmd == key && Lgetplayersadminlevel(whosentit) >= val.adminlevel) {
+
+                           function returnfunc(message,whoto = whosentit){        
+                                LSendChatMsg(whoto,0,message,false,false,false)
+                            }
                         // SetConVarString("autocvar_Lcommandreader", cmd)
                         
                         printt("running " + key + " For "+whosentit.GetPlayerName())
                         if (val.requiressender) {
-                        local output = val.inputfunction(whosentit,msgArr,false)}
+                        local output = val.inputfunction(whosentit,msgArr,returnfunc)}
                         else{
-                            local output = val.inputfunction(msgArr,false)
+                            local output = val.inputfunction(msgArr,returnfunc)
                         }
                         found = val.blockchatmessage
                         // Laddusedcommandtotable(message,"chat_command",output)
@@ -486,6 +514,26 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
     serveroutput += "☻"+id+"☻" + command + "☻" + output + "☻"+ commandtype + "☻X"
     ServerCommand("autocvar_Lcommandreader "+ serveroutput)
 }
+
+function Laddusedcommandtotablev2(data,commandtype = "sendcommand" ,id = false){
+    // if (!registercommandsasconvar){
+    //     return
+    // }
+    // Lreaderv2 V2
+    local editeddata = [commandtype,data,id]
+    local eddditteddata = [commandtype,data]
+    if (id){
+        tf1tobot += Loutputtable(editeddata)+"|"}
+    else{
+        tf1tobot += Loutputtable(eddditteddata)+"|"
+    }
+   
+}
+function Lpulldata(){
+    if (tf1tobot != ""){
+    printt(tf1tobot)
+    tf1tobot = ""}
+}
 // GetPlayerArray()
 // .len()
 // .append()
@@ -497,20 +545,16 @@ function Laddusedcommandtotable(command, commandtype, output = false, id = Rando
 
 
 
-function Loutputtable( tbl, indent = 0, maxDepth = 4, replacechar = "☻" )
+function Loutputtable( tbl, indent = 0, maxDepth = 4, replacechar = '"' )
 {   
     local output = ""
     indent = 0
-	output += ( TableIndent( indent ) )
-	output += PrintObjectt( tbl, indent, 0, maxDepth, output,replacechar )
+	output = PrintObjectt( tbl, indent, 0, maxDepth, output,replacechar )
+    // printt("OUTPUT"+output+"abc")
     return output
 }
 
 
-function TableIndent( indent )
-{
-	return ("                                            ").slice( 0, indent )
-}
 
 
 function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
@@ -527,12 +571,12 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
 		output += ( "{" )
 		foreach ( k, v in obj )
 		{
-			output += ( TableIndent( indent + 2 ) + replacechar+ k +replacechar+ " : " )
+			output += (  "" + replacechar.tochar()+ k + replacechar.tochar()+ ":" )
 			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output,replacechar )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
-		output += ( TableIndent( indent ) + "}" )
+		output += (  "}" )
 	}
 	else if ( IsArray( obj ) )
 	{
@@ -545,17 +589,17 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
 		output += ( "[" )
 		foreach ( v in obj )
 		{
-			output += ( TableIndent( indent + 2 ) )
+	
 			output = PrintObjectt( v, indent + 2, depth + 1, maxDepth ,output,replacechar )
             output += ","
 		}
         output = output.slice(0,output.len()-1)
-		output += ( TableIndent( indent ) + "]" )
+		output += (  "]" )
 	}
     else if ( typeof obj == "string") 
     {
         // local quote = replacechar
-        output += ( "" + replacechar+ obj + replacechar  )
+        output += ( "" + replacechar.tochar()+ obj + replacechar.tochar()  )
     }
 	else if ( obj != null )
 	{

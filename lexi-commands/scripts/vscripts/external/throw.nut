@@ -5,7 +5,7 @@ function main() {
 }
 
 
-function Lthrow(player,args,outputless = false){
+function Lthrow(player,args,returnfunc){
     function makesuretheyarethrown(player){
         local tries = 10
         while (tries > 0) {
@@ -25,10 +25,12 @@ function Lthrow(player,args,outputless = false){
 
 
     if (args.len() < 1){
-        return "invalid argument count"
+        returnfunc("invalid argument count")
+        return
     }
     if (GetMapName() == "mp_lobby") {
-        return "Cannot throw in the lobby"
+        returnfunc("Cannot throw in the lobby")
+        return
     }
     // ServerCommand ("banid "+GetPlayerSlot(player)) 
     // local plusone = GetPlayerSlot(player) +1
@@ -41,15 +43,18 @@ function Lthrow(player,args,outputless = false){
     local playerstothrow = Lgetentitysfromname(args[0])
     foreach (player2 in playerstothrow){
 
-            LSendChatMsg(true,0,player2.GetPlayerName() +" thrown",false,false,outputless)
+            returnfunc(player2.GetPlayerName() +" thrown", true)
         thread makesuretheyarethrown(player2)
     }
     if (playerstothrow.len() == 1){
 
-    return playerstothrow[0].GetPlayerName() +" thrown"}
+    returnfunc(playerstothrow[0].GetPlayerName() +" thrown")
+    return}
     else if (playerstothrow.len() == 0){
-    return "no one was found matching "+name}
+    returnfunc("no one was found matching "+args[0])
+    return}
       else if (playerstothrow.len() > 1){
-    return "threw "+playerstothrow.len() + " players"}
+    returnfunc("threw "+playerstothrow.len() + " players")
+    return}
 }
 

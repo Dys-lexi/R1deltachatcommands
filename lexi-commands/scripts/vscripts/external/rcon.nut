@@ -5,7 +5,7 @@ function main() {
    
 }
 
-function Lrcon(player,args,outputless = false){
+function Lrcon(player,args,returnfunc){
     
     if (args.len() == 0){
         return false
@@ -14,7 +14,7 @@ function Lrcon(player,args,outputless = false){
     foreach (arg in args){
         command += arg + " "
     }
-    LSendChatMsg(player,0,"running "+ command,false,false,outputless)
+    returnfunc("running "+ command)
     ServerCommand(command)
     return true
 }

@@ -4,11 +4,11 @@ function main() {
    
 }
 
-function Lgravity(args,outputless){
+function Lgravity(args,returnfunc){
     if (args.len() == 0 ){
         return false
     }
-    LSendChatMsg(true,0, "Gravity is now "+ args[0],false,false)
+    returnfunc("Gravity is now "+ args[0], true)
     ServerCommand("sv_cheats 1; sv_gravity "+args[0]+"; sv_cheats 0")
     return true
 }

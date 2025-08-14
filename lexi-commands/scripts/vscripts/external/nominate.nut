@@ -31,7 +31,7 @@ function main() {
 
 }
 
-function Lmaps(player,args,outputless = false){
+function Lmaps(player,args,returnfunc){
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
@@ -85,7 +85,7 @@ function Lmaps(player,args,outputless = false){
 }
 
 
-function Lnominate(player,args,outputless = false){
+function Lnominate(player,args,returnfunc){
     local MAPS = {}
     MAPS.mp_airbase          <- "Airbase"
     MAPS.mp_angel_city       <- "Angel City"
@@ -119,7 +119,7 @@ function Lnominate(player,args,outputless = false){
 
 
     if (args.len() == 0){
-        LSendChatMsg(player,0,"Include a map name! eg: !nm angel" ,false,false,outputless)
+        returnfunc("Include a map name! eg: !nm angel")
         return false
     }
     local newarg = ""
@@ -137,7 +137,7 @@ function Lnominate(player,args,outputless = false){
         }
     }
     if (containedmaps.len() == 0){
-        LSendChatMsg(player,0,wantedmap+" does not match any maps!" ,false,false,outputless)
+        returnfunc(wantedmap+" does not match any maps!")
 
         return false
     }
@@ -154,15 +154,15 @@ function Lnominate(player,args,outputless = false){
         }
 
         // printt("BOOOP"+matchedmaps)
-        LSendChatMsg(player,0,"Map name is matched by multiple maps! ("+matchedmaps+")" ,false,false,outputless)
+        returnfunc("Map name is matched by multiple maps! ("+matchedmaps+")")
         return false
     }
     if ( containedmaps[0] ==  GetMapName()) {
-        LSendChatMsg(player,0,"You cannot vote for the current map!" ,false,false,outputless)
+        returnfunc("You cannot vote for the current map!")
         return false
     }
     if (!ArrayContains(GetPlaylistUniqueMaps(GetCurrentPlaylistName()), containedmaps[0])){
-        LSendChatMsg(player,0,MAPS[containedmaps[0]]+" Is not in the map pool!" ,false,false,outputless)
+        returnfunc(MAPS[containedmaps[0]]+" Is not in the map pool!")
         return false
     }
     local noms = GetConVarString("autocvar_nominates")

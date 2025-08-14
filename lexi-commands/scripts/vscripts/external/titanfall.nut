@@ -5,8 +5,8 @@ function main() {
    
 }
 
-function Ltitanfall(player,args,outputless = false){
-    function Ddroptitan( player,sender,outputless )
+function Ltitanfall(player,args,returnfunc){
+    function Ddroptitan( player,sender,returnfunc )
     {
         // if ( !IsReplacementTitanAvailable( player ) )
         // {
@@ -17,7 +17,7 @@ function Ltitanfall(player,args,outputless = false){
         local titan = GetPlayerTitanInMap( player )
         if ( IsAlive( titan ) )
         {
-            LSendChatMsg(sender,0,"ClientCommand_ReplacementTitan "+ player+" " + player.entindex()+ " failed GetPlayerTitanInMap was true",false,false,outputless)
+            returnfunc("ClientCommand_ReplacementTitan "+ player+" " + player.entindex()+ " failed GetPlayerTitanInMap was true")
             // printt( "ClientCommand_ReplacementTitan", player, player.entindex(), "failed", "GetPlayerTitanInMap was true" )
             return true
         }
@@ -25,7 +25,7 @@ function Ltitanfall(player,args,outputless = false){
         if ( !IsAlive( player ) )
         {
             // printt( "ClientCommand_ReplacementTitan", player, player.entindex(), "failed", "IsAlive( player ) was false" )
-            LSendChatMsg(sender,0,"ClientCommand_ReplacementTitan "+ player+ " "+ player.entindex()+ " failed GetPlayerTitanInMap was true",false,false,outputless)
+            returnfunc("ClientCommand_ReplacementTitan "+ player+ " "+ player.entindex()+ " failed GetPlayerTitanInMap was true")
             return true
         }
 
@@ -53,16 +53,16 @@ function Ltitanfall(player,args,outputless = false){
     }
 
     if (args.len() == 0){
-         LSendChatMsg(player,0,"No arguments (need a player)",false,false,outputless)
+         returnfunc("No arguments (need a player)")
         return false
     }
     local playerstothrow = Lgetentitysfromname(args[0])
     if (playerstothrow.len() == 0){
-        LSendChatMsg(player,0,"No matches to that name",false,false,outputless)}
+        returnfunc("No matches to that name")}
     foreach (person in playerstothrow)
     {
-        LSendChatMsg(player,0,"Attempting drop titan for "+person.GetPlayerName() ,false,false,outputless)
-        Ddroptitan(person,player,outputless)
+        returnfunc("Attempting drop titan for "+person.GetPlayerName())
+        Ddroptitan(person,player,returnfunc)
         
     }
     

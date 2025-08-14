@@ -3,7 +3,7 @@ function main() {
     Lregistercommand(["hostiletf", "ht"], 1, true, Lhostiletf, "Play titanfall warning sound for a player. Args: [playername]", true, false)
 }
 
-function Lhostiletf(player, args, outputless = false) {
+function Lhostiletf(player, args, returnfunc) {
     function checkTitans(players) {
         local playersranon = ""
         local notatitan = 0
@@ -25,21 +25,26 @@ function Lhostiletf(player, args, outputless = false) {
     }
 
     if (args.len() < 1) {
-        return "Invalid argument count"
+        returnfunc("Invalid argument count")
+        return
     }
 
     if (GetMapName() == "mp_lobby") {
-        return "Cannot run in lobby"
+        returnfunc("Cannot run in lobby")
+        return
     }
 
     local playerstothrow = Lgetentitysfromname(args[0])
     local stringout = checkTitans(playerstothrow)
 
     if (playerstothrow.len() == 1) {
-        return stringout
+        returnfunc(stringout)
+        return
     } else if (playerstothrow.len() == 0) {
-        return "No one was found matching " + args[0]
+        returnfunc("No one was found matching " + args[0])
+        return
     } else if (playerstothrow.len() > 1) {
-        return stringout
+        returnfunc(stringout)
+        return
     }
 }

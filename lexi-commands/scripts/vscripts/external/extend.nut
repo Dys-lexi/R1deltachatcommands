@@ -7,23 +7,23 @@ function main() {
    
 }
 
-function Lextend(player,args,outputless = false){
+function Lextend(player,args,returnfunc){
     // PrintTable(level)
              LSendChatMsg(true,0, GetRoundTimeLimit_ForGameMode()+"wdw"+GameTime.TimeLeftSeconds()+" "+GetServerVar( "gameEndTime" )+ " "+(GetCurrentPlaylistVarInt("AT_timelimit", 10)) ,false,false)
              
     if (GetGameState() != eGameState.Playing){
-          LSendChatMsg(player,0,"You must be in a game!",false,false,outputless)
+          returnfunc("You must be in a game!")
         return
     }
     local response = Lvote("extend",player,1,false,args)
     // PrintTable(response)
         if (!response.voteispossible) {
-         LSendChatMsg(player,0,"not enough people online to pass vote ("+response.votesneeded+" needed)",false,false,outputless)
+         returnfunc("not enough people online to pass vote ("+response.votesneeded+" needed)")
     }
     else if (response.message == "voted") {
-        LSendChatMsg(true,0, player.GetPlayerName() +" has voted to extend the map ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        returnfunc(player.GetPlayerName() +" has voted to extend the map ("+response.votes+"/"+response.votesneeded+" votes)", true)
         if (response.votepassed) {
-            LSendChatMsg(true,0, "Map extended for "+timeextend+" minutes!",false,false)
+            returnfunc("Map extended for "+timeextend+" minutes!", true)
    
             level.nv.gameEndTime +=(timeextend  * 60.0 ).tointeger()
 //             SetServerVar("gameEndTime",(GetServerVar( "gameEndTime" ) +timeextend*60) .tointeger() + "")
@@ -39,10 +39,10 @@ function Lextend(player,args,outputless = false){
         }
     }
     else if (response.alreadyvoted) {
-        LSendChatMsg(true,0, player.GetPlayerName() +" really wants to extend the map! ("+response.votes+"/"+response.votesneeded+" votes)",false,false)
+        returnfunc(player.GetPlayerName() +" really wants to extend the map! ("+response.votes+"/"+response.votesneeded+" votes)", true)
     }
     else if (response.oncooldown) {
-        LSendChatMsg(player,0,"Extend is on cooldown for " + (response.extendcooldown).tointeger()+ " more seconds",false,false)
+        returnfunc("Extend is on cooldown for " + (response.extendcooldown).tointeger()+ " more seconds")
     }
     
     return true

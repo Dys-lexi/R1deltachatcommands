@@ -6,16 +6,18 @@ function main() {
     Lregistercommand("muteplayer",4,false,Lenforcemute,"enforce a mute",false)
 }
 
+
 function onconnecting (player){
     local playerdata = {}
     playerdata.ip <- player.GetPlayerIP()
     playerdata.name <- player.GetPlayerName()
     playerdata.uid <- player.GetPlatformUserId()
     playerdata.kickid <- player.GetUserId()
-    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","checkbantf1")
+    Laddusedcommandtotablev2(playerdata,"checkbantf1")
+    // Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","checkbantf1")
 }
 
-function Lenforcemute(args,outputless = false){
+function Lenforcemute(args,returnfunc){
     local expiry = ""
     local reason = ""
     local hasseasonreason = false

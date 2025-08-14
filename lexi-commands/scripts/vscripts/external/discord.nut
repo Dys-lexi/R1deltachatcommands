@@ -5,6 +5,6 @@ function main() {
    
 }
 
-function Ldiscord(player,args,outputless = false){
-    LSendChatMsg(true,0,"Join the discord at: https://discord.gg/QghRYjSJ84",false,false,outputless)
+function Ldiscord(player,args,returnfunc){
+    returnfunc("Join the discord at: https://discord.gg/QghRYjSJ84", true)
 }

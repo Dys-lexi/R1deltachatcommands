@@ -6,7 +6,7 @@ function main() {
 }
 
 
-function stats(player,args,outputless = false){
+function stats(player,args,returnfunc){
     local playerdata = {}
     playerdata.playeruid <- player.GetEntIndex()
     // playerdata.playerdiscorduid <- player.GetPlatformUserId()
@@ -21,6 +21,7 @@ function stats(player,args,outputless = false){
     //     playerdata.playername <- chatmessage.remove(chatmessage.len() -1)
      playerdata.playername <- args[0]
     }
-    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"stats")
+    Laddusedcommandtotablev2(playerdata,"stats")
+    // Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"stats")
     return true
 }

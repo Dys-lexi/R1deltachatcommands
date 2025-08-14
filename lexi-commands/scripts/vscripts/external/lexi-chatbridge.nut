@@ -31,14 +31,24 @@ function LBonmessage(whosentit, message, isteamchat) {
     if ((message.len() > 1 && format("%c", message[0]) == "!" ) || (message.len() > 2 && format("%c", message[0]) == "t"  &&format("%c", message[1]) == "!" ) ) {
         local output = message
         local metadata = {}
+        local messagee = {}
         metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
-        metadata.name <- GetEntByIndex(whosentit).GetPlayerName() 
         metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
         metadata.entid <- whosentit
         metadata.teamtype <- "not team"
-        Laddusedcommandtotable(output,"command_message",Loutputtable(metadata,0,4,"♥"))
+        metadata["type"] <- "tf1command"
+        messagee["overridechannel"] <- "commandlogchannel"
+        messagee.globalmessage <- true
+        messagee.messagecontent <- output+""
+        messagee.player <- GetEntByIndex(whosentit).GetPlayerName() 
+        messagee.timestamp <- Daily_GetCurrentTime()
+        messagee["type"] <- 3
+        messagee["metadata"] <- metadata
+        // Laddusedcommandtotable(output,"command_message",Loutputtable(metadata,0,4,"♥"))
+        Laddusedcommandtotablev2(messagee,"msg")
         return
     }
+        local messagee = {}
         local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
         local metadata = {}
         metadata.ismuted <-  GetEntByIndex(whosentit).GetUserId() + "" in Lgetmutes()
@@ -46,8 +56,15 @@ function LBonmessage(whosentit, message, isteamchat) {
         metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
         metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
         metadata.teamtype <- "not team"
+        metadata["type"] <- "usermessagepfp"
+        messagee.messagecontent <- message+""
+        messagee.player <- GetEntByIndex(whosentit).GetPlayerName()
+        messagee["type"] <- 1
+        
+        messagee["metadata"] <- metadata
+        Laddusedcommandtotablev2(messagee,"msg")
         // Laddusedcommandtotable(output+" "+GetEntByIndex(whosentit).GetModelName(),"chat_message",false)  OLD SYSTEM PFPLESS
-        Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
+        // Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
         return
 
     
@@ -87,48 +104,51 @@ function nextmap(){
     MAPS.mp_lobby            <- "Lobby"
     // local current = MAPS[GetMapName()]
     if (MAPS[GetMapName()] != "Lobby") {
-    Laddusedcommandtotable("Map has changed to: "+MAPS[GetMapName()],"connect_message")}
+    Laddusedcommandtotablev2("Map has changed to: "+MAPS[GetMapName()],"smsg")}
     else
     {
-        Laddusedcommandtotable("Game moving to lobby","connect_message")
+        Laddusedcommandtotablev2("Game moving to lobby","smsg")
     }
 }
 
 function requeststats (player){
-    wait 2
-            local playerdata = {}
-        playerdata.playeruid <- player.GetEntIndex()
+    wait 0
+    local playerdata = {}
+    playerdata.playeruid <- player.GetEntIndex()
     playerdata.uid <- player.GetPlatformUserId()
     playerdata.name <- player.GetPlayerName()
-    Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
+    Laddusedcommandtotablev2(playerdata,"stats")
+    // Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
 }
 
 function Lconnect (player){
+    // printt("THIS SHOULD HOPEFULLY WORK")
 
     thread requeststats(player)
-    if (Time() < 15) {
+    if (Time() < 0) {
         return
     }
+    // printt("I AM HERE NOW")
     local output = player.GetPlayerName() + " has joined the server (" + GetPlayerArray().len() + " Connected)"
-    Laddusedcommandtotable(output,"connect_message")
-
-
-
+    // Laddusedcommandtotable(output,"connect_message")
+    Laddusedcommandtotablev2(output,"smsg")
 }
 
 function Ldisconnect (player){
     local players = GetPlayerArray().len()-1
     local output = player.GetPlayerName() + " has left the server (" + players + " Connected)"
-    Laddusedcommandtotable(output,"connect_message")
+    Laddusedcommandtotablev2(output,"smsg")
 }
 
-function Lsendmessage(args,outputless = false){
+
+function Lsendmessage(args,returnfunc){
     local who = args[0]
     args.remove(0)
     local player = true
     // printt("who "+who)
     if ( GetPlayerArray().len() == 0) {
-        return "failed! 0 playing"
+        returnfunc("failed! 0 playing")
+        return
     }
     if (who != "placeholder"){
         foreach(person in GetPlayerArray()){
@@ -137,7 +157,8 @@ function Lsendmessage(args,outputless = false){
             }
         }
         if (player == true){
-            return "failed! person not found"
+            returnfunc("failed! person not found")
+            return
         }
     }
 
@@ -148,6 +169,7 @@ function Lsendmessage(args,outputless = false){
         }
     
     SendChatMsg(player,0,output,false,false)
-    return "sent!"
+    returnfunc("sent!")
+    return true
 }
 
