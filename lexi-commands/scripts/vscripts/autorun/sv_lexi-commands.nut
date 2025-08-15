@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.3.1"
+    ::version <- "v0.3.3"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -344,10 +344,10 @@ function authfunction(player,args,returnfunc) {
         }
     }
     if (!sucsess){
-        LSendChatMsg(player,0, "wrong pass",false,false,outputless)
+        returnfunc("wrong pass")
         return
     }
-    LSendChatMsg(player,0, "correct pass!",false,false,outputless)
+    returnfunc("correct pass")
     // PrintTable(adminlist)
 }
 function LSendChatMsg(who = true,from = 0, text = "", isteam = false, isdead = false, outputless = false){
