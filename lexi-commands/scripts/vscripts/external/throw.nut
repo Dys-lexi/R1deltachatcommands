@@ -48,7 +48,7 @@ function Lthrow(player,args,returnfunc){
     }
     if (playerstothrow.len() == 1){
 
-    returnfunc(playerstothrow[0].GetPlayerName() +" thrown")
+    // returnfunc(playerstothrow[0].GetPlayerName() +" thrown")
     return}
     else if (playerstothrow.len() == 0){
     returnfunc("no one was found matching "+args[0])

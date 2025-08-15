@@ -125,7 +125,7 @@ function Lconnect (player){
     // printt("THIS SHOULD HOPEFULLY WORK")
 
     thread requeststats(player)
-    if (Time() < 0) {
+    if (Time() < 15) {
         return
     }
     // printt("I AM HERE NOW")

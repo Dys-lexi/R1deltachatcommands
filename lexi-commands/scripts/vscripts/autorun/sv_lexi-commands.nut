@@ -2,7 +2,7 @@ function main() {
 
     local modfilenames = [
     "switchteam",
-    // "lexi-chatbridge",
+    "lexi-chatbridge",
     "gravitymod",
     "throw",
     "nominate",
@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.3.0"
+    ::version <- "v0.3.1"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -599,7 +599,12 @@ function PrintObjectt( obj, indent, depth, maxDepth ,output,replacechar )
     else if ( typeof obj == "string") 
     {
         // local quote = replacechar
-        output += ( "" + replacechar.tochar()+ obj + replacechar.tochar()  )
+        // printt("WHAT")
+        // local message = "hello \"world\""
+        local replace = "\""
+        local find = "\\\""
+        // printt(StringReplaceAll(message,replace,find))
+        output += (replacechar.tochar()+ StringReplaceAll(obj,replace,find) + replacechar.tochar()  )
     }
 	else if ( obj != null )
 	{
