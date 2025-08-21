@@ -43,7 +43,7 @@ function Lthrow(player,args,returnfunc){
     local playerstothrow = Lgetentitysfromname(args[0])
     foreach (player2 in playerstothrow){
 
-            returnfunc(player2.GetPlayerName() +" thrown", true)
+            returnfunc(player2.GetPlayerName() +" thrown ", true)
         thread makesuretheyarethrown(player2)
     }
     if (playerstothrow.len() == 1){
