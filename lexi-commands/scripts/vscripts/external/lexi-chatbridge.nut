@@ -16,7 +16,7 @@ function main() {
     Globalize(Lsendmessage)
     Globalize(helpdc)
     Lregistercommand("sendmessage",4,true,Lsendmessage,"send a chat message",false)
-    Lregistercommand("helpdc",0,true,helpdc,"get the discord help list",false)
+    Lregistercommand("helpdc",0,true,helpdc,"get the discord help list",true)
     AddCallback_OnClientConnected(Lconnect)
     AddCallback_OnClientDisconnected(Ldisconnect)
     AddCallback_OnClientChatMsg(LBonmessage)
@@ -53,7 +53,6 @@ function LBonmessage(whosentit, message, isteamchat) {
         local metadata = {}
         metadata.ismuted <-  GetEntByIndex(whosentit).GetUserId() + "" in Lgetmutes()
         metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
-        metadata.name <- GetEntByIndex(whosentit).GetPlayerName()
         metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
         metadata.teamtype <- "not team"
         metadata["type"] <- "usermessagepfp"
