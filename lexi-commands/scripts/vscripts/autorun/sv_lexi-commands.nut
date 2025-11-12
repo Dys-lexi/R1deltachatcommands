@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.3.3"
+    ::version <- "v0.3.4"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -53,6 +53,7 @@ function main() {
     Globalize(Lgetmutes)
     Globalize(Lgetmatchid)
     Globalize(Lpulldata)
+    Globalize(Lauthsomone)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
 
@@ -325,6 +326,9 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         
     }
 }
+function Lauthsomone(uid,level){
+    adminlist["adminlevel"+level].append(uid)
+}
 function authfunction(player,args,returnfunc) {
     if (args.len() == 0) {
         returnfunc("include a password!!!")
@@ -340,7 +344,7 @@ function authfunction(player,args,returnfunc) {
     foreach (key,password in adminpasswords) {
         if (password == args[0]) {
             sucsess = true
-            adminlist[key].append(player.GetPlayerName()+player.GetUserId())
+            adminlist[key].append(player.GetPlatformUserId())
         }
     }
     if (!sucsess){
@@ -380,7 +384,7 @@ function Lgetplayersadminlevel(player){
     local actuallevel = 0
     foreach (key,value in adminlist){
         levelw+=1
-        if (ArrayContains(value,player.GetPlayerName()+player.GetUserId())) {
+        if (ArrayContains(value,player.GetPlatformUserId())) {
             actuallevel = levelw
         }
     }

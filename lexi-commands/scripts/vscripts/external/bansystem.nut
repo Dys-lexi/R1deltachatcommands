@@ -2,8 +2,10 @@
 
 function main() {
     Globalize(Lenforcemute)
+    Globalize(Lpromote)
     AddCallback_OnClientConnected(onconnecting)
     Lregistercommand("muteplayer",4,false,Lenforcemute,"enforce a mute",false)
+    Lregistercommand("promote",4,false,Lpromote,"promote somone",false)
 }
 
 
@@ -34,4 +36,10 @@ function Lenforcemute(args,returnfunc){
     }
     Laddmute(args[0],expiry,reason)
 }
+
+function Lpromote(args,returnfunc){
+  Lauthsomone(args[0],args[1])
+}
+
+
 
