@@ -39,6 +39,11 @@ function Lenforcemute(args,returnfunc){
 
 function Lpromote(args,returnfunc){
   Lauthsomone(args[0],args[1])
+  foreach (player in GetPlayerArray()) {
+    if (player.GetPlatformUserId() == args[0]){
+        LSendChatMsg(player,0, "You were auto-promoted to admin level " + args[1] ,false,false,false)
+    }
+  }
 }
 
 
