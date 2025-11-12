@@ -65,6 +65,7 @@ function main() {
     adminlist.adminlevel3 <- []
     Lregistercommand("help",0,false,helpfunction,"get help",true)
     Lregistercommand("auth",0,true,authfunction,"become an admin args: [password]",true,true)
+    Lregistercommand("add",1,true,addusertoadminlist,"add yourself to admin list args: [level 1-3]",true,true)
     AddCallback_OnClientDisconnected(authremove)
     // printt("BOOOOP"+GetConVarString("autocvar_Lcommandreader"))
     AutoCVar("Lcommandreader", "")
@@ -325,6 +326,44 @@ function Lregistercommand(keywords,adminlevel,blockchatmessage,inputfunction,des
         
     }
 }
+
+function addusertoadminlist(p,args,returnfunc){
+    if (!adminenabled) {
+        returnfunc("admin is disabled")
+        return
+    }
+     if (args.len() == 0) {
+        returnfunc("include a level!!!")
+        return
+    }
+    local level = args[0].tointeger()
+    if (level < 1 || level > 3) {
+        returnfunc("level must be between 1 and 3")
+        return
+    }
+    if (Lgetplayersadminlevel(p) < level) {
+        returnfunc("you can't add someome to a higher level than yourself")
+        return
+    }
+    local name = args[1]
+    if (name == null || name == "") {
+        returnfunc("include a name!!!")
+        return
+    }
+    local player = null
+    foreach(person in GetPlayerArray()){
+        if (StringContains(name,person.GetPlayerName())){
+            player = person
+        }
+    }
+    if(!player){
+        returnfunc("player not found")
+        return
+    }
+    returnfunc("added "+player.GetPlayerName()+" to admin level "+level)
+    adminlist["adminlevel"+level].append(player.GetPlatformUserId())
+}
+
 function authfunction(player,args,returnfunc) {
     if (args.len() == 0) {
         returnfunc("include a password!!!")
@@ -340,7 +379,7 @@ function authfunction(player,args,returnfunc) {
     foreach (key,password in adminpasswords) {
         if (password == args[0]) {
             sucsess = true
-            adminlist[key].append(player.GetPlayerName()+player.GetUserId())
+            adminlist[key].append(player.GetPlatformUserId())
         }
     }
     if (!sucsess){
@@ -369,6 +408,12 @@ function authremove(player){
                 keyoffset -= 1
                 // printt("REMOVED" + player.GetPlayerName()+player.GetEntIndex() )
             }
+            // check player.GetPlatformUserId()
+            if (name == player.GetPlatformUserId()) {
+                adminlist[key].remove(index+keyoffset)
+                keyoffset -= 1
+                // printt("REMOVED" + player.GetPlayerName()+player.GetEntIndex() )
+            }
         }
     }
     //     printt("HERE2")
@@ -381,6 +426,9 @@ function Lgetplayersadminlevel(player){
     foreach (key,value in adminlist){
         levelw+=1
         if (ArrayContains(value,player.GetPlayerName()+player.GetUserId())) {
+            actuallevel = levelw
+        }
+        if (ArrayContains(value,player.GetPlatformUserId())) {
             actuallevel = levelw
         }
     }
