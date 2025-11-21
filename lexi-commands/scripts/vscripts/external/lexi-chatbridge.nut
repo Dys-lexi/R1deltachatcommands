@@ -120,10 +120,23 @@ function requeststats (player){
     // Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
 }
 
+function requestnatterforcoolperks(player){
+    if ((!Lgetnatterforcoolperks) || (MAPS[GetMapName()] != "Lobby")){
+        return
+    }
+    local playerdata = {}
+    playerdata.playeruid <- player.GetEntIndex()
+    playerdata.uid <- player.GetPlatformUserId()
+    playerdata.name <- player.GetPlayerName()
+    Laddusedcommandtotablev2(playerdata,"natterforcoolperks")
+
+}
+
 function Lconnect (player){
     // printt("THIS SHOULD HOPEFULLY WORK")
 
     thread requeststats(player)
+    thread requestnatterforcoolperks(player)
     if (Time() < 15) {
         return
     }

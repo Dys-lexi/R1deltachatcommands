@@ -21,7 +21,7 @@ function main() {
     adminpasswords.adminlevel3 <- "level3AUTH"
 
 
-
+    ::natterforcoolperks <- false //probably keep this false, is only used in conjunction with the chatbridge
 
 
     // ^SETTINGS ABOVE DON'T TOUCH STUFF BELOW FOR MOST PART^ 
@@ -54,6 +54,7 @@ function main() {
     Globalize(Lgetmatchid)
     Globalize(Lpulldata)
     Globalize(Lauthsomone)
+    Globalize(Lgetnatterforcoolperks)
     AddCallback_OnClientChatMsg(onmessage)
     AddCallback_OnClientConnected(Lonjoin)
 
@@ -81,6 +82,10 @@ function main() {
         IncludeFile(format("external/%s", mod))
     }
    
+}
+
+function Lgetnatterforcoolperks(){
+    return natterforcoolperks
 }
 
 function Lgetmatchid(){
