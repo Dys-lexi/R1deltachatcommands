@@ -7,6 +7,7 @@ function main() {
     "privatemessage",
     "stats"
     "bansystem"
+    "lexitone"
     ]
     foreach (mod in modfilenames) {
         printt("loading commandfileb "+mod)
