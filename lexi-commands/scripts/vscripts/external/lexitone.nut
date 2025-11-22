@@ -88,7 +88,7 @@ function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
 
     local distance = Distance(attacker.GetOrigin(), victim.GetOrigin())
     values["distance"] <- distance
-    PrintTable(values)
+    //PrintTable(values)
     Laddusedcommandtotablev2(values,"killstat")
 } 
 
