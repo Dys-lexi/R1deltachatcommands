@@ -1,9 +1,12 @@
 function main() {
+    if (IsLobby()){
+        return
+    }
     AddCallback_PlayerOrNPCKilled(OnPlayerOrNPCKilled)
 }
 
 function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
-    if ((!victim.IsPlayer() && !attacker.IsPlayer() && !attacker.GetBossPlayer() && !victim.GetBossPlayer())  || GetGameState() != eGameState.Playing ) {
+    if ((!victim.IsPlayer() && !attacker.IsPlayer() && !attacker.GetBossPlayer() && !victim.GetBossPlayer())  || GetGameState() != eGameState.Playing  ) {
         return
     }
     local values = {}
@@ -16,23 +19,27 @@ function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
     if (attacker.IsPlayer()) {
         values["attacker_name"] <- attacker.GetPlayerName()
         values["attacker_id"] <- attacker.GetUID()
+        values["attacker_entid"] <- attacker.GetEntIndex()
         values["attacker_titan"] <- GetTitan(attacker)
     }
     else if (attacker.GetBossPlayer()) {
         local boss = attacker.GetBossPlayer()
         values["attacker_name"] <- boss.GetPlayerName()
         values["attacker_id"] <- boss.GetUID()
+        values["attacker_entid"] <- attacker.GetEntIndex()
         values["attacker_titan"] <- GetTitan(attacker)
     }
     if (victim.IsPlayer()) {
         values["victim_name"] <- victim.GetPlayerName()
         values["victim_id"] <- victim.GetUID()
+        values["victim_entid"] <- victim.GetEntIndex()
         values["victim_titan"] <- GetTitan(victim)
     }
     else if( victim.GetBossPlayer()) {
         local boss = victim.GetBossPlayer()
         values["victim_name"] <- boss.GetPlayerName()
         values["victim_id"] <- boss.GetUID()
+        values["victim_entid"] <- victim.GetEntIndex()
         values["victim_titan"] <- GetTitan(victim)
     }
      if (attacker.IsPlayer() || attacker.IsNPC()) {
@@ -49,7 +56,8 @@ function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
                 values["attacker_offhand_weapon_" + i] <- weapon.GetClassname()
             }
         }
-        values["attacker_current_weapon"] <- attacker.GetActiveWeapon().GetClassname()
+        if (attacker.GetActiveWeapon()) {
+        values["attacker_current_weapon"] <- attacker.GetActiveWeapon().GetClassname()}
      }
 
     if (victim.IsPlayer() || victim.IsNPC()) {
@@ -66,7 +74,9 @@ function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
                 values["victim_offhand_weapon_" + i] <- weapon.GetClassname()
             }
         }
-        values["victim_current_weapon"] <- victim.GetActiveWeapon().GetClassname()
+
+        if (victim.GetActiveWeapon()) {
+        values["victim_current_weapon"] <- victim.GetActiveWeapon().GetClassname()}
     }
 
     values["victim_x"] <- victimPos.x
@@ -78,23 +88,25 @@ function OnPlayerOrNPCKilled( victim, attacker, damageInfo ) {
     values["attacker_z"] <- attackerPos.z
     values["timeofkill"] <- GetUnixTimestamp()
     values["match_id"] <- Lgetmatchid()
-    values["victim_type"] <- victim.GetModelName()
-    values["attacker_type"] <-attacker.GetModelName()
+    values["victim_type"] <- victim.GetClassname()
+    values["attacker_type"] <-attacker.GetClassname()
 
     local damageId = 
     values["cause_of_death"] <- GetNameFromDamageSourceID(damageInfo.GetDamageSourceIdentifier())
     local mods = GetWeaponModsFromDamageInfo(damageInfo)
-    values["modsusesd"] <- mods
-
+    if (mods.len() > 0){
+        
+    values["modsused"] <- mods
+    }
     local distance = Distance(attacker.GetOrigin(), victim.GetOrigin())
     values["distance"] <- distance
-    //PrintTable(values)
+    // PrintTable(values)
     Laddusedcommandtotablev2(values,"killstat")
 } 
 
 function GetTitan(player) {
     if(!player.IsPlayer()) 
-        return null
+        return "null"
     if(player.GetPetTitan() != null) {
         printt("getting pet titan type")
         local titan = player.GetPetTitan()
@@ -104,5 +116,5 @@ function GetTitan(player) {
         printt("getting boss titan type")
         return GetSoulTitanType(player.GetTitanSoul())
     }
-    return null
+    return "null"
 }

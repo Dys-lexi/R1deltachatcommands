@@ -122,9 +122,9 @@ function requeststats (player){
 }
 
 function requestnatterforcoolperks(player){
-    if ((!Lgetnatterforcoolperks) || (MAPS[GetMapName()] != "Lobby")){
-        return
-    }
+    // if ((!Lgetnatterforcoolperks) || (MAPS[GetMapName()] != "Lobby")){
+    //     return
+    // }
     local playerdata = {}
     playerdata.playeruid <- player.GetEntIndex()
     playerdata.uid <- player.GetPlatformUserId()
