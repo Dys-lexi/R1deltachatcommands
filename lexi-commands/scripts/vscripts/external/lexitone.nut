@@ -108,12 +108,19 @@ function GetTitan(player) {
     if(!player.IsPlayer()) 
         return "null"
     if(player.GetPetTitan() != null) {
-        printt("getting pet titan type")
         local titan = player.GetPetTitan()
+        if(!IsValid(titan)) {
+            return "null"
+        }
+        if(titan.GetTitanSoul() == null) {
+            return "null"
+        }
         return GetSoulTitanType(titan.GetTitanSoul())
     }
     else if (player.IsTitan()) {
-        printt("getting boss titan type")
+        if(player.GetTitanSoul() == null) {
+            return "null"
+        }
         return GetSoulTitanType(player.GetTitanSoul())
     }
     return "null"
