@@ -38,7 +38,7 @@ function main() {
     // print("LOADDDED WOOOOOP WOOOP")
     // thread Iwanttorepeatthismessage ()
     ::registeredvotes <- {}
-    ::version <- "v0.3.5"
+    ::version <- "v0.3.6"
     Globalize(Lregistercommand)
     Globalize(Lprefix)
     Globalize(Laddmute)
@@ -378,7 +378,7 @@ function realsendchatmessage(who = true,from = 0, text = "", isteam = false, isd
     while (Icheckedeverything) {
         Icheckedeverything = true
         foreach (player in players){
-            if ( ( IsLobby() && !IsAlive( player )   && player.s.lastDeathTime < Time() + 10)){
+            if ( ( !IsLobby() && !IsAlive( player )   && player.s.lastDeathTime < Time() + 10)){
                 continue
             }
             Icheckedeverything = false

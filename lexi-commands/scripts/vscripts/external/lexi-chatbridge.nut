@@ -209,9 +209,9 @@ function Lsendmessage(args,returnfunc){
         //     return
         // }
     } else{
-        if (Time() < 10){
-            returnfunc("failed! too early")
-        }
+        // if (Time() < 10){
+        //     returnfunc("failed! too early")
+        // }
     }
 
     local output = ""
