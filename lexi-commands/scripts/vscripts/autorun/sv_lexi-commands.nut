@@ -531,7 +531,7 @@ function onmessage(whosentit, message, isteamchat)
         // else {
         //     Laddusedcommandtotable(message,"chat_message")
         // }
-        if (!found && !shouldblockcommand(message)){
+        if (!found && ("shouldblockcommand" in getroottable() && !shouldblockcommand(message))){
             // printt("Here")
         
    
