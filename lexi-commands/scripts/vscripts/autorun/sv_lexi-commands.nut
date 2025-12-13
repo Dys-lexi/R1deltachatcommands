@@ -536,7 +536,7 @@ function onmessage(whosentit, message, isteamchat)
         // }else
         // {print("saddd")}
         if (!found && (!("shouldblockcommand" in getroottable()) || !shouldblockcommand(message))){
-            printt("Here")
+            // printt("Here")
         // if not found AND the thing does not exist OR the thing retuns false
    
         return forcereturn}
