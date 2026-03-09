@@ -103,9 +103,9 @@ function nextmap(){
     MAPS.mp_harmony_mines    <- "Dig Site"
     MAPS.mp_zone_18          <- "Zone 18"
     MAPS.mp_mia              <- "M.I.A"
-    MAPS.mp_nest2            <- "Nest 2"
+    MAPS.mp_nest2            <- "Nest"
     MAPS.mp_box              <- "Box"
-    MAPS.mp_npe              <- "Training"
+    MAPS.mp_npe              <- "Certification"
     MAPS.mp_o2               <- "Demeter"
     MAPS.mp_lobby            <- "Lobby"
     // local current = MAPS[GetMapName()]
