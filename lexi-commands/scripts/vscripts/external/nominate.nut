@@ -7,7 +7,7 @@ function main() {
    ::allowedmaps <- []
    ::initedmaps <- {}
    initedmaps.idkglobals <- false
-   AutoCVar("nominates", "b")
+	AutoCVar( "nominates", "b", "", "" )
     if (GetCurrentPlaylistName() == "campaign_carousel") {
         return
     }
