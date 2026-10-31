@@ -1,227 +1,276 @@
 // requires lexi-commands to work
 
-function main() {
-
-    local modfilenames = [
-    "playing",
-    "privatemessage",
-    "stats"
-    "bansystem"
-    "lexitone"
-    ]
-    foreach (mod in modfilenames) {
-        printt("loading commandfileb "+mod)
-        IncludeFile(format("external/%s", mod))
-    }
-    ::blockedargs <- {}
-    Globalize(shouldblockcommand)
-    Globalize(Lsendmessage)
-    Globalize(loadblockedcommands)
-    Globalize(helpdc)
-    Lregistercommand("sendmessage",4,true,Lsendmessage,"send a chat message",false)
-    Lregistercommand("helpdc",0,true,helpdc,"get the discord help list",true)
-    Lregistercommand("senddiscordcommands",4,false,loadblockedcommands,"loads blocked commands",false)
-    AddCallback_OnClientConnected(Lconnect)
-    AddCallback_OnClientDisconnected(Ldisconnect)
-    AddCallback_OnClientChatMsg(LBonmessage)
-    thread nextmap()
-    Laddusedcommandtotablev2("","getdiscordcommands")
-
+function main()
+{
+	local modfilenames = [ "playing", "privatemessage", "stats", "bansystem", "lexitone" ]
+	foreach ( mod in modfilenames )
+	{
+		printt( "loading commandfileb " + mod )
+		IncludeFile( format( "external/%s", mod ) )
+	}
+	::blockedargs <- {}
+	Globalize( shouldblockcommand )
+	Globalize( Lsendmessage )
+	Globalize( loadblockedcommands )
+	Globalize( helpdc )
+	Lregistercommand( "sendmessage", 4, true, Lsendmessage, "send a chat message", false )
+	Lregistercommand( "helpdc", 0, true, helpdc, "get the discord help list", true )
+	Lregistercommand( "senddiscordcommands", 4, false, loadblockedcommands, "loads blocked commands", false )
+	AddCallback_OnClientConnected( Lconnect )
+	AddCallback_OnClientDisconnected( Ldisconnect )
+	AddCallback_OnClientChatMsg( LBonmessage )
+	thread nextmap()
+	Laddusedcommandtotablev2( "", "getdiscordcommands" )
 }
-function helpdc(a,b,c){
-    return true
+function helpdc( a, b, c )
+{
+	return true
 }
 
-function LBonmessage(whosentit, message, isteamchat) {
-    
-    if ((message.len() > 1 && format("%c", message[0]) == "!" ) || (message.len() > 2 && format("%c", message[0]) == "t"  &&format("%c", message[1]) == "!" ) ) {
-        local output = message
-        local metadata = {}
-        local messagee = {}
-        metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
-        metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
-        metadata.entid <- whosentit
-        metadata.teamtype <- "not team"
-        metadata["type"] <- "tf1command"
-        metadata["blockedcommand"] <- shouldblockcommand(message)
-        messagee["overridechannel"] <- "commandlogchannel"
-        messagee.globalmessage <- true
-        messagee.messagecontent <- output+""
-        messagee.player <- GetEntByIndex(whosentit).GetPlayerName() 
-        messagee.timestamp <- Daily_GetCurrentTime()
-        messagee["type"] <- 3
-        messagee["metadata"] <- metadata
-        // Laddusedcommandtotable(output,"command_message",Loutputtable(metadata,0,4,"♥"))
-        Laddusedcommandtotablev2(messagee,"msg")
-        return
-    }
-        local messagee = {}
-        local output = "**"+GetEntByIndex(whosentit).GetPlayerName() + "**: " + message
-        local metadata = {}
-        metadata.ismuted <-  GetEntByIndex(whosentit).GetUserId() + "" in Lgetmutes()
-        metadata.pfp <- (GetEntByIndex(whosentit).GetTeam() == TEAM_MILITIA)+" "+GetEntByIndex(whosentit).GetModelName()
-        metadata.uid <- GetEntByIndex(whosentit).GetPlatformUserId()
-        metadata.teamtype <- "not team"
-        metadata["type"] <- "usermessagepfp"
-        messagee.messagecontent <- message+""
-        messagee.player <- GetEntByIndex(whosentit).GetPlayerName()
-        messagee["type"] <- 1
-        
-        messagee["metadata"] <- metadata
-        Laddusedcommandtotablev2(messagee,"msg")
-        // Laddusedcommandtotable(output+" "+GetEntByIndex(whosentit).GetModelName(),"chat_message",false)  OLD SYSTEM PFPLESS
-        // Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
-        return
+function LBonmessage( whosentit, message, isteamchat )
+{
+	if (
+		( message.len() > 1 && format( "%c", message[ 0 ] ) == "!" ) ||
+		( message.len() > 2 && format( "%c", message[ 0 ] ) == "t" && format( "%c", message[ 1 ] ) == "!" )
+	)
+	{
+		local output = message
+		local metadata = {}
+		local messagee = {}
+		metadata.pfp <- ( GetEntByIndex( whosentit ).GetTeam() == TEAM_MILITIA ) + " " + GetEntByIndex( whosentit ).GetModelName()
+		metadata.uid <- GetEntByIndex( whosentit ).GetPlatformUserId()
+		metadata.entid <- whosentit
+		metadata.teamtype <- "not team"
+		metadata[ "type" ] <- "tf1command"
+		metadata[ "blockedcommand" ] <- shouldblockcommand( message )
+		messagee[ "overridechannel" ] <- "commandlogchannel"
+		messagee.globalmessage <- true
+		messagee.messagecontent <- output + ""
+		messagee.player <- GetEntByIndex( whosentit ).GetPlayerName()
+		messagee.timestamp <- Daily_GetCurrentTime()
+		messagee[ "type" ] <- 3
+		messagee[ "metadata" ] <- metadata
+		// Laddusedcommandtotable(output,"command_message",Loutputtable(metadata,0,4,"♥"))
+		Laddusedcommandtotablev2( messagee, "msg" )
+		return
+	}
+	local messagee = {}
+	local output = "**" + GetEntByIndex( whosentit ).GetPlayerName() + "**: " + message
+	local metadata = {}
+	metadata.ismuted <- GetEntByIndex( whosentit ).GetUserId() + "" in Lgetmutes()
+	metadata.pfp <- ( GetEntByIndex( whosentit ).GetTeam() == TEAM_MILITIA ) + " " + GetEntByIndex( whosentit ).GetModelName()
+	metadata.uid <- GetEntByIndex( whosentit ).GetPlatformUserId()
+	metadata.teamtype <- "not team"
+	metadata[ "type" ] <- "usermessagepfp"
+	messagee.messagecontent <- message + ""
+	messagee.player <- GetEntByIndex( whosentit ).GetPlayerName()
+	messagee[ "type" ] <- 1
 
-    
-    
+	messagee[ "metadata" ] <- metadata
+	Laddusedcommandtotablev2( messagee, "msg" )
+	// Laddusedcommandtotable(output+" "+GetEntByIndex(whosentit).GetModelName(),"chat_message",false)  OLD SYSTEM PFPLESS
+	// Laddusedcommandtotable(message,"usermessagepfp",Loutputtable(metadata,0,4,"♥"))
+	return
 }
-function nextmap(){
-    // wait 10
-    local MAPS = {}
-    MAPS.mp_airbase          <- "Airbase"
-    MAPS.mp_angel_city       <- "Angel City"
-    MAPS.mp_boneyard         <- "Boneyard"
-    MAPS.mp_colony           <- "Colony"
-    MAPS.mp_corporate        <- "Corporate"
-    MAPS.mp_fracture         <- "Fracture"
-    MAPS.mp_lagoon           <- "Lagoon"
-    MAPS.mp_nexus            <- "Nexus"
-    MAPS.mp_outpost_207      <- "Outpost 207"
-    MAPS.mp_overlook         <- "Overlook"
-    MAPS.mp_relic            <- "Relic"
-    MAPS.mp_rise             <- "Rise"
-    MAPS.mp_smugglers_cove   <- "Smuggler's Cove"
-    MAPS.mp_training_ground  <- "Training Ground"
-    MAPS.mp_wargames         <- "War Games"
-    MAPS.mp_runoff           <- "Runoff"
-    MAPS.mp_swampland        <- "Swampland"
-    MAPS.mp_haven            <- "Haven"
-    MAPS.mp_switchback       <- "Export"
-    MAPS.mp_backwater        <- "Backwater"
-    MAPS.mp_sandtrap         <- "Sand Trap"
-    MAPS.mp_harmony_mines    <- "Dig Site"
-    MAPS.mp_zone_18          <- "Zone 18"
-    MAPS.mp_mia              <- "M.I.A"
-    MAPS.mp_nest2            <- "Nest"
-    MAPS.mp_box              <- "Box"
-    MAPS.mp_npe              <- "Certification"
-    MAPS.mp_o2               <- "Demeter"
-    MAPS.mp_lobby            <- "Lobby"
-    // local current = MAPS[GetMapName()]
-    if (MAPS[GetMapName()] != "Lobby") {
-    Laddusedcommandtotablev2("Map has changed to: "+MAPS[GetMapName()],"smsg")}
-    else
-    {
-        Laddusedcommandtotablev2("Game moving to lobby","smsg")
-    }
-}
+function nextmap()
+{
+	// wait 10
+	local MAPS = {}
+	MAPS.mp_airbase <- "Airbase"
+	MAPS.mp_angel_city <- "Angel City"
+	MAPS.mp_boneyard <- "Boneyard"
+	MAPS.mp_colony <- "Colony"
+	MAPS.mp_corporate <- "Corporate"
+	MAPS.mp_fracture <- "Fracture"
+	MAPS.mp_lagoon <- "Lagoon"
+	MAPS.mp_nexus <- "Nexus"
+	MAPS.mp_outpost_207 <- "Outpost 207"
+	MAPS.mp_overlook <- "Overlook"
+	MAPS.mp_relic <- "Relic"
+	MAPS.mp_rise <- "Rise"
+	MAPS.mp_smugglers_cove <- "Smuggler's Cove"
+	MAPS.mp_training_ground <- "Training Ground"
+	MAPS.mp_wargames <- "War Games"
+	MAPS.mp_runoff <- "Runoff"
+	MAPS.mp_swampland <- "Swampland"
+	MAPS.mp_haven <- "Haven"
+	MAPS.mp_switchback <- "Export"
+	MAPS.mp_backwater <- "Backwater"
+	MAPS.mp_sandtrap <- "Sand Trap"
+	MAPS.mp_harmony_mines <- "Dig Site"
+	MAPS.mp_zone_18 <- "Zone 18"
+	MAPS.mp_mia <- "M.I.A"
+	MAPS.mp_nest2 <- "Nest"
+	MAPS.mp_box <- "Box"
+	MAPS.mp_npe <- "Certification"
+	MAPS.mp_o2 <- "Demeter"
+	MAPS.mp_lobby <- "Lobby"
 
-function requeststats (player){
-    wait 0
-    local playerdata = {}
-    playerdata.playeruid <- player.GetEntIndex()
-    playerdata.uid <- player.GetPlatformUserId()
-    playerdata.name <- player.GetPlayerName()
-    Laddusedcommandtotablev2(playerdata,"stats")
-    // Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
-}
-
-function requestnatterforcoolperks(player){
-    if ((!Lgetnatterforcoolperks) ){//|| IsLobby()){
-        return
-    }
-    local playerdata = {}
-    playerdata.playeruid <- player.GetEntIndex()
-    playerdata.uid <- player.GetPlatformUserId()
-    playerdata.name <- player.GetPlayerName()
-    Laddusedcommandtotablev2(playerdata,"natterforcoolperks")
-
-}
-
-function Lconnect (player){
-    // printt("THIS SHOULD HOPEFULLY WORK")
-
-    thread requeststats(player)
-    thread requestnatterforcoolperks(player)
-    if (Time() < 15) {
-        return
-    }
-    // printt("I AM HERE NOW")
-    local output = player.GetPlayerName() + " has joined the server (" + GetPlayerArray().len() + " Connected)"
-    // Laddusedcommandtotable(output,"connect_message")
-    Laddusedcommandtotablev2(output,"smsg")
+	MAPS.mp_thaw <- "Exoplanet"
+	MAPS.mp_glitch <- "Glitch"
+	MAPS.mp_eden <- "Eden"
+	MAPS.mp_blackwater_canal <- "Blackwater Canal"
+	MAPS.mp_coliseum <- "Coliseum"
+	MAPS.mp_coliseum_column <- "Pillars"
+	MAPS.mp_colony02 <- "Colony"
+	MAPS.mp_complex3 <- "Complex"
+	MAPS.mp_crashsite3 <- "Crash Site"
+	MAPS.mp_drydock <- "Drydock"
+	MAPS.mp_forwardbase_kodai <- "Forwardbase Kodai"
+	MAPS.mp_grave <- "Boomtown"
+	MAPS.mp_homestead <- "Homestead"
+	MAPS.mp_lf_deck <- "Deck"
+	MAPS.mp_lf_meadow <- "Meadow"
+	MAPS.mp_lf_stacks <- "Stacks"
+	MAPS.mp_lf_township <- "Township"
+	MAPS.mp_lf_traffic <- "Traffic"
+	MAPS.mp_lf_uma <- "UMA"
+	// local current = MAPS[GetMapName()]
+	if ( MAPS[ GetMapName() ] != "Lobby" )
+	{
+		Laddusedcommandtotablev2( "Map has changed to: " + MAPS[ GetMapName() ], "smsg" )
+	}
+	else
+	{
+		Laddusedcommandtotablev2( "Game moving to lobby", "smsg" )
+	}
 }
 
-function Ldisconnect (player){
-    local players = GetPlayerArray().len()-1
-    local output = player.GetPlayerName() + " has left the server (" + players + " Connected)"
-    Laddusedcommandtotablev2(output,"smsg")
+function requeststats( player )
+{
+	wait 0
+	local playerdata = {}
+	playerdata.playeruid <- player.GetEntIndex()
+	playerdata.uid <- player.GetPlatformUserId()
+	playerdata.name <- player.GetPlayerName()
+	Laddusedcommandtotablev2( playerdata, "stats" )
+	// Laddusedcommandtotable(Loutputtable(playerdata,0,4,"♥"),"sendcommand","stats")
 }
 
-function shouldblockcommand(text){
-    if ((text.len() > 1 && format("%c", text.tolower()[0]) == "!") && (split(text.tolower().slice(1)," ")[0] in blockedargs && (blockedargs[split(text.tolower().slice(1)," ")[0]] || (split(text.tolower().slice(1)," ").len() > 1 && split(text.tolower().slice(1)," ")[1] in blockedargs && blockedargs[split(text.tolower().slice(1)," ")[1]])))){
-        return true
-    }else{
-
-     return false}
+function requestnatterforcoolperks( player )
+{
+	if ( ( !Lgetnatterforcoolperks ) )
+	{ // || IsLobby()){
+		return
+	}
+	local playerdata = {}
+	playerdata.playeruid <- player.GetEntIndex()
+	playerdata.uid <- player.GetPlatformUserId()
+	playerdata.name <- player.GetPlayerName()
+	Laddusedcommandtotablev2( playerdata, "natterforcoolperks" )
 }
 
-function loadblockedcommands(args,returnfunc){
+function Lconnect( player )
+{
+	// printt("THIS SHOULD HOPEFULLY WORK")
 
-    local i = 0
-    local prevarg = ""
-    for (i = 0; i < args.len(); i++){
-		if ((i+1) % 2) {
-			prevarg = args[i]
+	thread requeststats( player )
+	thread requestnatterforcoolperks( player )
+	if ( Time() < 15 )
+	{
+		return
+	}
+	// printt("I AM HERE NOW")
+	local output = player.GetPlayerName() + " has joined the server (" + GetPlayerArray().len() + " Connected)"
+	// Laddusedcommandtotable(output,"connect_message")
+	Laddusedcommandtotablev2( output, "smsg" )
+}
+
+function Ldisconnect( player )
+{
+	local players = GetPlayerArray().len() - 1
+	local output = player.GetPlayerName() + " has left the server (" + players + " Connected)"
+	Laddusedcommandtotablev2( output, "smsg" )
+}
+
+function shouldblockcommand( text )
+{
+	if (
+		( text.len() > 1 && format( "%c", text.tolower()[ 0 ] ) == "!" ) &&
+		(
+			split( text.tolower().slice( 1 ), " " )[ 0 ] in blockedargs &&
+				(
+					blockedargs[ split( text.tolower().slice( 1 ), " " )[ 0 ] ] ||
+						(
+							split( text.tolower().slice( 1 ), " " ).len() > 1 && split( text.tolower().slice( 1 ), " " )[ 1 ] in blockedargs &&
+								blockedargs[ split( text.tolower().slice( 1 ), " " )[ 1 ] ]
+						)
+				)
+		)
+	)
+	{
+		return true
+	}
+	else
+	{
+		return false
+	}
+}
+
+function loadblockedcommands( args, returnfunc )
+{
+	local i = 0
+	local prevarg = ""
+	for ( i = 0; i < args.len(); i++ )
+	{
+		if ( ( i + 1 ) % 2 )
+		{
+			prevarg = args[ i ]
 		}
-        		else{
+		else
+		{
 			local shouldblock = false
-			if (args[i] == "1") {
+			if ( args[ i ] == "1" )
+			{
 				shouldblock = true
 			}
-			blockedargs[prevarg] <- shouldblock
+			blockedargs[ prevarg ] <- shouldblock
 		}
-        
-		
-    }
-    returnfunc("Set commands - " + i / 2 + " commands found")
-
+	}
+	returnfunc( "Set commands - " + i / 2 + " commands found" )
 }
-function Lsendmessage(args,returnfunc){
-    local who = args[0]
-    args.remove(0)
-    local player = true
-    // printt("who "+who)
-    if ( GetPlayerArray().len() == 0) {
-        returnfunc("failed! 0 playing")
-        return
-    }
-    
-    if (who != "placeholder"){
-        foreach(person in GetPlayerArray()){
-            if (StringContains(who,person.GetPlatformUserId())){
-                player = person
-            }
-        }
-        // if (player == true){
-        //     returnfunc("failed! person not found")
-        //     return
-        // }
-    } else{
-        // if (Time() < 10){
-        //     returnfunc("failed! too early")
-        // }
-    }
+function Lsendmessage( args, returnfunc )
+{
+	local who = args[ 0 ]
+	args.remove( 0 )
+	local player = true
+	// printt("who "+who)
+	if ( GetPlayerArray().len() == 0 )
+	{
+		returnfunc( "failed! 0 playing" )
+		return
+	}
 
-    local output = ""
+	if ( who != "placeholder" )
+	{
+		foreach ( person in GetPlayerArray() )
+		{
+			if ( StringContains( who, person.GetPlatformUserId() ) )
+			{
+				player = person
+			}
+		}
+		// if (player == true){
+		//     returnfunc("failed! person not found")
+		//     return
+		// }
+	}
+	else
+	{
+		// if (Time() < 10){
+		//     returnfunc("failed! too early")
+		// }
+	}
 
-        foreach(arg in args) {
-            output += arg + " "
-        }
-    
-    LSendChatMsg(player,0,output,false,false,false,true)
-    returnfunc("sent!")
-    return true
+	local output = ""
+
+	foreach ( arg in args )
+	{
+		output += arg + " "
+	}
+
+	LSendChatMsg( player, 0, output, false, false, false, true )
+	returnfunc( "sent!" )
+	return true
 }
 
